@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Verify OTP</title>
+    <link th:href="@{/css/default-ui.css}" rel="stylesheet" />
+    <style>
+        .timer { font-weight: bold; color: #d9534f; }
+        .resend-btn { margin-top: 1rem; }
+        #resendBtn { cursor: pointer; }
+        #resendBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+<div class="content">
+    <h1>Enter OTP</h1>
+
+    <div th:if="${message}" class="alert alert-success">
+        <p th:text="${message}"></p>
+    </div>
+    <div th:if="${error}" class="alert alert-danger">
+        <p th:text="${error}"></p>
+    </div>
+
+    <form th:action="@{/forgot-password/verify}" method="post">
+        <input th:name="${_csrf.parameterName}" type="hidden" th:value="${_csrf.token}" />
+        <input type="hidden" name="email" th:value="${email}" />
+        <p>
+            <label for="otp">OTP</label>
+            <input type="text" id="otp" name="otp" placeholder="Enter the OTP sent to your email" required />
+        </p>
+        <p>
+            <span class="timer">Time remaining: <span id="timer">5:00</span></span>
+        </p>
+        <button type="submit">Verify OTP</button>
+    </form>
+
+    <div class="resend-btn">
+        <form th:action="@{/forgot-password/resend}" method="post" id="resendForm">
+            <input th:name="${_csrf.parameterName}" type="hidden" th:value="${_csrf.token}" />
+            <input type="hidden" name="email" th:value="${email}" />
+            <button type="button" id="resendBtn" onclick="handleResendClick()" disabled>Resend OTP</button>
+        </form>
+    </div>
+
+    <p><a th:href="@{/login}">Back to login</a></p>
+</div>
+
+<script>
+    const TIMER_DURATION = 300; // 5 minutes in seconds
+    let timeRemaining = TIMER_DURATION;
+    let timerInterval;
+
+    function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return mins + ':' + (secs < 10 ? '0' : '') + secs;
+    }
+
+    function startTimer() {
+        const timerElement = document.getElementById('timer');
+        const resendBtn = document.getElementById('resendBtn');
+
+        timerInterval = setInterval(() => {
+            timeRemaining--;
+            timerElement.textContent = formatTime(timeRemaining);
+
+            if (timeRemaining <= 0) {
+                clearInterval(timerInterval);
+                resendBtn.disabled = false;
+                timerElement.textContent = '0:00';
+            }
+        }, 1000);
+    }
+
+    function handleResendClick() {
+        if (timeRemaining > 0) {
+            alert('OTP is still valid. Please wait until it expires before requesting a new one.');
+            return;
+        }
+        // Reset timer and submit form
+        document.getElementById('resendForm').submit();
+    }
+
+    // Start timer on page load
+    window.addEventListener('load', () => {
+        startTimer();
+    });
+</script>
+</body>
+</html>

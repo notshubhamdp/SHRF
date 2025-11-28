@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Email Confirmation</title>
+</head>
+<body>
+    <h1 th:if="${success}" th:text="${message}">Email Confirmed</h1>
+    <div th:if="${!success}">
+        <h1>Confirmation Failed</h1>
+        <p th:text="${message}">There was a problem confirming your email.</p>
+    </div>
+</body>
+</html>
