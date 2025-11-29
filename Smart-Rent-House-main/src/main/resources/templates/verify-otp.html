@@ -2,48 +2,82 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Verify OTP</title>
-    <link th:href="@{/css/default-ui.css}" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Verify OTP - Smart Rent House</title>
     <style>
-        .timer { font-weight: bold; color: #d9534f; }
+        :root{--bg:#f6f8fb;--card:#fff;--accent:#4f46e5;--muted:#6b7280}
+        html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(135deg,#eef2ff 0%, #f8fafc 100%);color:#0f172a}
+        .wrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:28px}
+        .card{background:var(--card);border-radius:12px;box-shadow:0 12px 30px rgba(2,6,23,0.06);padding:28px;max-width:520px;width:100%}
+        h1{margin:0 0 6px}
+        .lead{color:var(--muted);margin-bottom:14px}
+        .field{display:flex;flex-direction:column;margin-bottom:12px}
+        label{font-size:.9rem;margin-bottom:6px;color:var(--muted)}
+        input[type="text"]{padding:12px;border-radius:10px;border:1px solid #e6e9ef;background:#fbfdff}
+        button{display:inline-block;padding:10px 14px;border-radius:10px;background:var(--accent);color:#fff;border:none;cursor:pointer;font-weight:600}
+        .timer { font-weight:600; color:#dc2626 }
+        /* OTP boxes */
+        .otp-group{display:flex;gap:10px;margin-top:6px}
+        .otp-input{width:48px;height:56px;border-radius:10px;border:1px solid #e6e9ef;background:#fbfdff;font-size:20px;line-height:56px;text-align:center;outline:none}
+        .otp-input:focus{box-shadow:0 8px 20px rgba(79,70,229,0.1);border-color:var(--accent)}
         .resend-btn { margin-top: 1rem; }
-        #resendBtn { cursor: pointer; }
+        #resendBtn { cursor: pointer; padding:10px 12px;border-radius:8px;border:1px solid rgba(2,6,23,0.06);background:transparent;font-weight:600;color:var(--muted);transition:all 0.3s ease }
         #resendBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+        #resendBtn:not(:disabled) { background:var(--accent);color:#fff;border-color:var(--accent);cursor:pointer;padding:10px 14px }
+        .alert{padding:10px;border-radius:8px;margin-bottom:12px}
+        .alert-success{background:#ecfdf5;color:#065f46}
+        .alert-danger{background:#fff1f2;color:#9f1239}
+        a.link{color:var(--accent);text-decoration:none}
     </style>
 </head>
 <body>
-<div class="content">
-    <h1>Enter OTP</h1>
+<div class="wrap">
+    <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <div style="font-weight:700;color:var(--accent)">Smart Rent House</div>
+        </div>
+        <h1>Enter OTP</h1>
+        <p class="lead">Enter the one-time password sent to your email to continue.</p>
 
-    <div th:if="${message}" class="alert alert-success">
-        <p th:text="${message}"></p>
-    </div>
-    <div th:if="${error}" class="alert alert-danger">
-        <p th:text="${error}"></p>
-    </div>
+        <div th:if="${message}" class="alert alert-success">
+            <p th:text="${message}"></p>
+        </div>
+        <div th:if="${error}" class="alert alert-danger">
+            <p th:text="${error}"></p>
+        </div>
 
-    <form th:action="@{/forgot-password/verify}" method="post">
-        <input th:name="${_csrf.parameterName}" type="hidden" th:value="${_csrf.token}" />
-        <input type="hidden" name="email" th:value="${email}" />
-        <p>
-            <label for="otp">OTP</label>
-            <input type="text" id="otp" name="otp" placeholder="Enter the OTP sent to your email" required />
-        </p>
-        <p>
-            <span class="timer">Time remaining: <span id="timer">5:00</span></span>
-        </p>
-        <button type="submit">Verify OTP</button>
-    </form>
-
-    <div class="resend-btn">
-        <form th:action="@{/forgot-password/resend}" method="post" id="resendForm">
+        <form th:action="@{/forgot-password/verify}" method="post">
             <input th:name="${_csrf.parameterName}" type="hidden" th:value="${_csrf.token}" />
             <input type="hidden" name="email" th:value="${email}" />
-            <button type="button" id="resendBtn" onclick="handleResendClick()" disabled>Resend OTP</button>
+            <div class="field">
+                <label for="otp">OTP</label>
+                <div class="otp-group" role="group" aria-label="Enter 6 digit OTP">
+                    <input inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" id="otp-1" aria-label="Digit 1" />
+                    <input inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" id="otp-2" aria-label="Digit 2" />
+                    <input inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" id="otp-3" aria-label="Digit 3" />
+                    <input inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" id="otp-4" aria-label="Digit 4" />
+                    <input inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" id="otp-5" aria-label="Digit 5" />
+                    <input inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" id="otp-6" aria-label="Digit 6" />
+                </div>
+                <!-- hidden combined OTP value for form submit -->
+                <input type="hidden" id="otp" name="otp" />
+            </div>
+            <div style="display:flex;align-items:center;gap:12px">
+                <span class="timer">Time remaining: <span id="timer">5:00</span></span>
+                <button type="submit">Verify OTP</button>
+            </div>
         </form>
-    </div>
 
-    <p><a th:href="@{/login}">Back to login</a></p>
+        <div class="resend-btn">
+            <form th:action="@{/forgot-password/resend}" method="post" id="resendForm">
+                <input th:name="${_csrf.parameterName}" type="hidden" th:value="${_csrf.token}" />
+                <input type="hidden" name="email" th:value="${email}" />
+                <button type="button" id="resendBtn" onclick="handleResendClick()" disabled>Resend OTP</button>
+            </form>
+        </div>
+
+        <p style="margin-top:12px"><a th:href="@{/login}" class="link">Back to login</a></p>
+    </div>
 </div>
 
 <script>
@@ -69,6 +103,9 @@
                 clearInterval(timerInterval);
                 resendBtn.disabled = false;
                 timerElement.textContent = '0:00';
+                // Show "Resend OTP" text in place of timer or add visual cue
+                const timerSpan = timerElement.parentElement;
+                timerSpan.innerHTML = '✓ OTP Expired - <strong style="color:var(--accent)">Click Resend</strong>';
             }
         }, 1000);
     }
@@ -78,14 +115,60 @@
             alert('OTP is still valid. Please wait until it expires before requesting a new one.');
             return;
         }
-        // Reset timer and submit form
+        // submit form
         document.getElementById('resendForm').submit();
     }
 
     // Start timer on page load
     window.addEventListener('load', () => {
         startTimer();
+        setupOtpInputs();
     });
+
+    // OTP input helpers
+    function setupOtpInputs(){
+        const inputs = Array.from(document.querySelectorAll('.otp-input'));
+        const hidden = document.getElementById('otp');
+
+        function updateHidden(){
+            hidden.value = inputs.map(i => i.value || '').join('');
+        }
+
+        inputs.forEach((input, idx) => {
+            input.addEventListener('input', (e) => {
+                const val = e.target.value.replace(/[^0-9]/g, '');
+                e.target.value = val;
+                if(val && idx < inputs.length - 1){
+                    inputs[idx + 1].focus();
+                }
+                updateHidden();
+            });
+
+            input.addEventListener('keydown', (e) => {
+                if(e.key === 'Backspace' && !e.target.value && idx > 0){
+                    inputs[idx - 1].focus();
+                }
+                // allow arrow navigation
+                if(e.key === 'ArrowLeft' && idx > 0){ inputs[idx - 1].focus(); }
+                if(e.key === 'ArrowRight' && idx < inputs.length - 1){ inputs[idx + 1].focus(); }
+            });
+
+            input.addEventListener('paste', (e) => {
+                e.preventDefault();
+                const paste = (e.clipboardData || window.clipboardData).getData('text') || '';
+                const digits = paste.replace(/\D/g, '').slice(0, inputs.length).split('');
+                digits.forEach((d, i) => { inputs[i].value = d; });
+                if(digits.length) inputs[Math.min(digits.length, inputs.length) - 1].focus();
+                updateHidden();
+            });
+        });
+
+        // ensure hidden input is updated before native submit
+        const form = document.querySelector('form[th\:action="@{/forgot-password/verify}"]') || document.querySelector('form[action="/forgot-password/verify"]') || document.querySelector('form');
+        if(form){
+            form.addEventListener('submit', () => { updateHidden(); });
+        }
+    }
 </script>
 </body>
 </html>

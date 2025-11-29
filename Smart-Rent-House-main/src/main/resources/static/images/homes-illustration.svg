@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Simple, friendly SVG illustration for Smart Rent House registration page -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid meet">
+  <defs>
+    <linearGradient id="g1" x1="0" x2="1">
+      <stop offset="0" stop-color="#eef2ff"/>
+      <stop offset="1" stop-color="#f8fafc"/>
+    </linearGradient>
+    <linearGradient id="g2" x1="0" x2="1">
+      <stop offset="0" stop-color="#4f46e5" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#g1)"/>
+
+  <!-- A simple row of stylized houses -->
+  <g transform="translate(120,180) scale(1.2)">
+    <g transform="translate(0,120)">
+      <rect x="0" y="120" width="220" height="150" rx="12" fill="#fff" stroke="#e6e9ef"/>
+      <polygon points="0,120 110,40 220,120" fill="#4f46e5" opacity="0.95"/>
+      <rect x="160" y="180" width="40" height="90" rx="6" fill="#0f172a" opacity="0.08"/>
+    </g>
+
+    <g transform="translate(260,60)">
+      <rect x="0" y="120" width="200" height="150" rx="12" fill="#fff" stroke="#e6e9ef"/>
+      <polygon points="0,120 100,20 200,120" fill="#10b981" opacity="0.95"/>
+      <rect x="140" y="170" width="40" height="100" rx="6" fill="#0f172a" opacity="0.08"/>
+    </g>
+
+    <g transform="translate(520,120)">
+      <rect x="0" y="120" width="220" height="150" rx="12" fill="#fff" stroke="#e6e9ef"/>
+      <polygon points="0,120 110,40 220,120" fill="#ef4444" opacity="0.95"/>
+      <rect x="40" y="180" width="40" height="90" rx="6" fill="#0f172a" opacity="0.08"/>
+    </g>
+
+    <!-- Decorative foreground card -->
+    <g transform="translate(80,320)">
+      <rect x="0" y="0" width="720" height="220" rx="18" fill="url(#g2)"/>
+      <rect x="16" y="16" width="688" height="188" rx="12" fill="#fff" stroke="#e6e9ef"/>
+      <text x="40" y="70" fill="#0f172a" font-size="28" font-family="Segoe UI, Roboto, Arial" font-weight="700">Welcome to Smart Rent House</text>
+      <text x="40" y="110" fill="#6b7280" font-size="16" font-family="Segoe UI, Roboto, Arial">Find verified rentals, manage your applications, and connect with landlords.</text>
+      <rect x="40" y="140" width="160" height="40" rx="10" fill="#4f46e5"/>
+      <text x="78" y="168" fill="#fff" font-size="14" font-family="Segoe UI, Roboto, Arial" font-weight="600">Get Started</text>
+    </g>
+  </g>
+
+  <!-- subtle shadow -->
+  <ellipse cx="600" cy="740" rx="360" ry="36" fill="#0f172a" opacity="0.03"/>
+</svg>

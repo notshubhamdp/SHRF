@@ -49,6 +49,15 @@ public class User  implements UserDetails {
     )
     private boolean enabled;
 
+    @Column(name = "role")
+    private String role; // "TENANT" or "LANDLORD"
+
+    @Column(name = "tenant_type")
+    private String tenantType; // "STUDENT" or "FAMILY" (only if role == "TENANT")
+
+    @Column(name = "document_path")
+    private String documentPath; // path to uploaded student ID document
+
     public User() {
     }
 
@@ -142,5 +151,29 @@ public class User  implements UserDetails {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getTenantType() {
+        return tenantType;
+    }
+
+    public void setTenantType(String tenantType) {
+        this.tenantType = tenantType;
+    }
+
+    public String getDocumentPath() {
+        return documentPath;
+    }
+
+    public void setDocumentPath(String documentPath) {
+        this.documentPath = documentPath;
     }
 }

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tenant Type - Smart Rent House</title>
+    <style>
+        :root{--bg:#f6f8fb;--card:#ffffff;--accent:#4f46e5;--muted:#6b7280}
+        html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(135deg,#eef2ff 0%, #f8fafc 100%);color:#0f172a}
+        .wrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:32px}
+        .card{background:var(--card);border-radius:14px;box-shadow:0 10px 30px rgba(15,23,42,0.08);padding:48px;max-width:720px;width:100%}
+        h1{margin:0 0 8px;font-size:1.8rem}
+        p.lead{margin:0 0 32px;color:var(--muted)}
+        .tenant-options{display:flex;gap:24px;flex-wrap:wrap}
+        .tenant-card{flex:1;min-width:200px;border:2px solid #e6e9ef;border-radius:12px;padding:32px;text-align:center;cursor:pointer;transition:all 0.3s ease}
+        .tenant-card:hover{border-color:var(--accent);box-shadow:0 8px 24px rgba(79,70,229,0.12)}
+        .tenant-card input[type="radio"]{display:none}
+        .tenant-card input[type="radio"]:checked ~ .tenant-border{border-color:var(--accent);background:rgba(79,70,229,0.04)}
+        .tenant-border{position:absolute;top:0;left:0;right:0;bottom:0;border:2px solid #e6e9ef;border-radius:12px;pointer-events:none;transition:all 0.3s ease}
+        .tenant-content{position:relative;z-index:1}
+        .tenant-icon{font-size:48px;margin-bottom:12px}
+        .tenant-title{font-size:1.2rem;font-weight:600;margin-bottom:6px}
+        .tenant-desc{font-size:0.9rem;color:var(--muted)}
+        .tenant-wrapper{position:relative;display:flex;flex-direction:column;gap:0}
+        button{display:inline-block;padding:12px 32px;border-radius:10px;background:var(--accent);color:white;border:none;font-weight:600;cursor:pointer;margin-top:24px}
+        .alert{padding:12px;border-radius:8px;margin-bottom:16px}
+        .alert-error{background:#fff1f2;color:#9f1239}
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="card">
+        <div style="font-weight:700;color:var(--accent);margin-bottom:16px">Smart Rent House</div>
+        <h1>What Type of Tenant Are You?</h1>
+        <p class="lead">Select the category that best describes your situation.</p>
+
+        <div th:if="${error}" class="alert alert-error">
+            <p th:text="${error}"></p>
+        </div>
+
+        <form method="post" th:action="@{/role-selection/tenant-type}">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            
+            <div class="tenant-options">
+                <!-- Student Option -->
+                <label class="tenant-card tenant-wrapper">
+                    <input type="radio" name="tenantType" value="STUDENT" required />
+                    <div class="tenant-content">
+                        <div class="tenant-icon">🎓</div>
+                        <div class="tenant-title">Student</div>
+                        <div class="tenant-desc">Pursuing education</div>
+                    </div>
+                </label>
+
+                <!-- Family Option -->
+                <label class="tenant-card tenant-wrapper">
+                    <input type="radio" name="tenantType" value="FAMILY" required />
+                    <div class="tenant-content">
+                        <div class="tenant-icon">👨‍👩‍👧</div>
+                        <div class="tenant-title">Family</div>
+                        <div class="tenant-desc">General tenant</div>
+                    </div>
+                </label>
+            </div>
+
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:24px">
+                <button type="submit">Continue</button>
+                <a th:href="@{/role-selection}" style="color:var(--accent);text-decoration:none;font-size:0.9rem">Back</a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

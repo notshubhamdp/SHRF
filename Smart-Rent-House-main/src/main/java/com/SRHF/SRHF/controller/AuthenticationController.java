@@ -1,7 +1,9 @@
 package com.SRHF.SRHF.controller;
 
 import com.SRHF.SRHF.entity.User;
+import com.SRHF.SRHF.repository.UserRepository;
 import com.SRHF.SRHF.service.CustomUserDetailsService;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -12,9 +14,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class AuthenticationController {
 
     private final CustomUserDetailsService userDetailsService;
+    private final UserRepository userRepository;
 
-    public AuthenticationController(CustomUserDetailsService userDetailsService) {
+    public AuthenticationController(CustomUserDetailsService userDetailsService, UserRepository userRepository) {
         this.userDetailsService = userDetailsService;
+        this.userRepository = userRepository;
     }
 
     @GetMapping

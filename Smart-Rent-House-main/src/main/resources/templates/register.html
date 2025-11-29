@@ -1,54 +1,82 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" >
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <title>Please sign in</title>
-    <link th:href="@{/css/default-ui.css}" rel="stylesheet" />
+    <title>Register - Smart Rent House</title>
+    <style>
+        :root{--bg:#f6f8fb;--card:#ffffff;--accent:#4f46e5;--muted:#6b7280}
+        html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(135deg,#eef2ff 0%, #f8fafc 100%);color:#0f172a}
+        .wrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:32px}
+        .card{background:var(--card);border-radius:14px;box-shadow:0 10px 30px rgba(15,23,42,0.08);display:flex;overflow:hidden;max-width:980px;width:100%}
+        .left{flex:1;padding:48px;min-width:320px}
+        .right{flex:1;background:linear-gradient(180deg,rgba(79,70,229,0.06),transparent);padding:48px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+        h1{margin:0 0 8px;font-size:1.5rem}
+        p.lead{margin:0 0 20px;color:var(--muted)}
+        form{width:100%;max-width:420px}
+        .field{display:flex;flex-direction:column;margin-bottom:14px}
+        label{font-size:.85rem;margin-bottom:6px;color:var(--muted)}
+        input[type="text"],input[type="email"],input[type="password"]{padding:12px 14px;border-radius:10px;border:1px solid #e6e9ef;background:#fbfdff;font-size:1rem;outline:none}
+        input:focus{box-shadow:0 6px 18px rgba(79,70,229,0.12);border-color:var(--accent)}
+        .btn{display:inline-block;padding:12px 18px;border-radius:10px;background:var(--accent);color:white;border:none;font-weight:600;cursor:pointer}
+        .secondary{background:transparent;color:var(--accent);border:1px solid rgba(79,70,229,0.12)}
+        .small{font-size:.9rem;color:var(--muted);margin-top:12px}
+        .logo{font-weight:700;color:var(--accent);letter-spacing:.3px}
+        @media (max-width:800px){.card{flex-direction:column}.right{padding:28px}.left{padding:28px}}
+        .alert{padding:10px 12px;border-radius:8px;margin-bottom:12px}
+        .alert-success{background:#ecfdf5;color:#065f46}
+        .alert-error{background:#fff1f2;color:#9f1239}
+    </style>
 </head>
 <body>
-<div class="content">
-    <!-- Bind form to a 'user' model attribute provided by the controller -->
-    <form class="login-form" th:method="post" th:action="@{/register}" th:object="${user}">
-        <h2>Please sign in</h2>
+<div class="wrap">
+    <div class="card">
+        <div class="left">
+            <div class="logo">Smart Rent House</div>
+            <h1>Create your account</h1>
+            <p class="lead">Join our community and find peaceful rental homes matched to your lifestyle.</p>
 
-        <div th:if="${message}" class="alert alert-success">
-            <p th:text="${message}"></p>
+            <div th:if="${message}" class="alert alert-success">
+                <p th:text="${message}"></p>
+            </div>
+            <div th:if="${error}" class="alert alert-error">
+                <p th:text="${error}"></p>
+            </div>
+
+            <form th:method="post" th:action="@{/register}" th:object="${user}">
+                <div class="field">
+                    <label for="firstName">First name</label>
+                    <input type="text" th:field="*{firstName}" id="firstName" placeholder="First name" required autofocus />
+                </div>
+                <div class="field">
+                    <label for="lastName">Last name</label>
+                    <input type="text" th:field="*{lastName}" id="lastName" placeholder="Last name" required />
+                </div>
+                <div class="field">
+                    <label for="email">Email</label>
+                    <input type="email" th:field="*{email}" id="email" placeholder="you@domain.com" required />
+                </div>
+                <div class="field">
+                    <label for="password">Password</label>
+                    <input type="password" th:field="*{password}" id="password" placeholder="Choose a strong password" required />
+                </div>
+                <div class="field">
+                    <label for="confirmPassword">Confirm password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm password" required />
+                </div>
+                <input th:name="${_csrf.parameterName}" type="hidden" th:value="${_csrf.token}" />
+                <div style="display:flex;gap:12px;align-items:center">
+                    <button class="btn" type="submit">Create account</button>
+                    <a th:href="@{/login}" class="secondary btn" style="padding:10px 14px">Sign in</a>
+                </div>
+                <p class="small">By creating an account you agree to our terms. We respect your privacy.</p>
+            </form>
         </div>
-
-        <p>
-            <label for="firstName" class="screenreader">First Name</label>
-            <input type="text" th:field="*{firstName}" placeholder="First Name" required autofocus />
-        </p>
-
-        <p>
-            <label for="lastName" class="screenreader">Last Name</label>
-            <input type="text" th:field="*{lastName}" placeholder="Last Name" required />
-        </p>
-
-        <p>
-            <label for="email" class="screenreader">Email</label>
-            <input type="email" th:field="*{email}" placeholder="Email" style="height :auto"; width :100%; font-size: "1rem"; box-sizing: "border-box" required />
-        </p>
-
-        <p>
-            <label for="password" class="screenreader">Password</label>
-            <input type="password" th:field="*{password}" id="password" placeholder="Password" required />
-        </p>
-
-        <p>
-            <label for="confirmPassword" class="screenreader">Confirm Password</label>
-            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required />
-        </p>
-
-        <input th:name="${_csrf.parameterName}" type="hidden" th:value="${_csrf.token}" />
-        <button type="submit" class="primary">Register</button>
-    </form>
-
-
-
+        <div class="right">
+            <!-- Local SVG illustration added: /static/images/homes-illustration.svg -->
+            <img th:src="@{/images/homes-illustration.svg}" src="/images/homes-illustration.svg" alt="Homes illustration" style="width:100%;border-radius:10px;box-shadow:0 6px 20px rgba(15,23,42,0.06)" />
+        </div>
+    </div>
 </div>
 </body>
 </html>

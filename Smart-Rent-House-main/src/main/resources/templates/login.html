@@ -2,33 +2,54 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Login - Smart Rent House</title>
     <style>
-        body{ font-family: Arial, sans-serif; padding: 2rem; }
-        form{ max-width:360px }
-        div.field{ margin-bottom: .75rem }
+        :root{--bg:#f3f4f6;--card:#fff;--accent:#4f46e5;--muted:#6b7280}
+        body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#f8fafc,#eef2ff)}
+        .card{width:420px;background:var(--card);border-radius:12px;padding:28px;box-shadow:0 12px 30px rgba(2,6,23,0.08)}
+        h2{margin:0 0 8px;color:#0f172a}
+        p.lead{margin:0 0 18px;color:var(--muted)}
+        .field{display:flex;flex-direction:column;margin-bottom:12px}
+        label{font-size:.85rem;margin-bottom:6px;color:var(--muted)}
+        input{padding:12px;border-radius:10px;border:1px solid #e6e9ef;background:#fbfdff}
+        .btn{display:inline-block;padding:12px 16px;border-radius:10px;background:var(--accent);color:#fff;border:none;cursor:pointer;font-weight:600}
+        .links{display:flex;justify-content:space-between;margin-top:12px;font-size:.95rem}
+        a.link{color:var(--accent);text-decoration:none}
+        .alert{padding:10px;border-radius:8px;margin-bottom:12px}
+        .alert-success{background:#ecfdf5;color:#065f46}
     </style>
 </head>
 <body>
-<h1>Login</h1>
-<form th:action="@{/login}" method="post">
-    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+    <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div style="font-weight:700;color:var(--accent)">Smart Rent House</div>
+        </div>
+        <h2>Welcome back</h2>
+        <p class="lead">Sign in to continue to your account.</p>
 
-    <div class="field">
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" required autofocus />
-    </div>
+        <div th:if="${message}" class="alert alert-success">
+            <p th:text="${message}"></p>
+        </div>
 
-    <div class="field">
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" required />
+        <form th:action="@{/login}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <div class="field">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required autofocus />
+            </div>
+            <div class="field">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required />
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+                <button class="btn" type="submit">Sign in</button>
+                <div class="links">
+                    <a th:href="@{/forgot-password}" class="link">Forgot password?</a>
+                    <a th:href="@{/register}" class="link" style="margin-left:10px">Register</a>
+                </div>
+            </div>
+        </form>
     </div>
-
-    <div class="field">
-        <button type="submit">Login</button>
-    </div>
-</form>
-<p><a th:href="@{/register}">Register</a></p>
-<p><a th:href="@{/forgot-password}">Forgot password?</a></p>
 </body>
 </html>
