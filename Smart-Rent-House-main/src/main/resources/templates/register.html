@@ -26,6 +26,7 @@
         .alert{padding:10px 12px;border-radius:8px;margin-bottom:12px}
         .alert-success{background:#ecfdf5;color:#065f46}
         .alert-error{background:#fff1f2;color:#9f1239}
+        .privacy-notice{padding:12px;border-radius:8px;background:#fef3c7;border-left:4px solid #f59e0b;color:#92400e;margin-bottom:16px;font-size:0.9rem}
     </style>
 </head>
 <body>
@@ -41,6 +42,11 @@
             </div>
             <div th:if="${error}" class="alert alert-error">
                 <p th:text="${error}"></p>
+            </div>
+
+            <!-- Privacy & Broker Notice -->
+            <div class="privacy-notice">
+                <strong>⚠️ Important:</strong> Brokers, agents, and intermediaries are not allowed on this platform. Only direct landlord-tenant transactions are permitted. Users found violating this policy will be banned.
             </div>
 
             <form th:method="post" th:action="@{/register}" th:object="${user}">

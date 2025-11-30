@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pending Properties - Admin - Smart Rent House</title>
+    <style>
+        :root{--bg:#f6f8fb;--card:#ffffff;--accent:#4f46e5;--muted:#6b7280;--success:#10b981;--warning:#f59e0b;--danger:#ef4444}
+        html,body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(135deg,#eef2ff 0%, #f8fafc 100%);color:#0f172a}
+        .navbar{background:#fff;padding:16px 32px;box-shadow:0 2px 8px rgba(15,23,42,0.04);display:flex;justify-content:space-between;align-items:center}
+        .logo{font-weight:700;color:var(--accent)}
+        .nav-links{display:flex;gap:24px}
+        .nav-links a{color:var(--accent);text-decoration:none;font-weight:500}
+        .admin-badge{background:var(--danger);color:white;padding:4px 8px;border-radius:4px;font-size:0.75rem;font-weight:600}
+        .container{max-width:1200px;margin:32px auto;padding:0 32px}
+        h1{font-size:2rem;margin:0 0 8px}
+        .lead{color:var(--muted);margin:0 0 32px}
+        .message{padding:12px 16px;border-radius:8px;margin-bottom:16px}
+        .message-success{background:#dcfce7;color:#166534}
+        .message-error{background:#fee2e2;color:#991b1b}
+        table{width:100%;border-collapse:collapse;margin-top:24px}
+        th{background:var(--accent);color:white;padding:12px;text-align:left;font-weight:600}
+        td{padding:12px;border-bottom:1px solid #e5e7eb}
+        tr:hover{background:#f9fafb}
+        .btn{display:inline-block;padding:8px 16px;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.9rem;cursor:pointer;border:none}
+        .btn-view{background:var(--accent);color:white}
+        .btn-view:hover{opacity:0.9}
+        .status-badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:0.85rem;font-weight:600}
+        .status-pending{background:#fef3c7;color:#92400e}
+        .status-approved{background:#dcfce7;color:#166534}
+        .status-rejected{background:#fee2e2;color:#991b1b}
+        .empty-state{text-align:center;padding:60px 32px;color:var(--muted)}
+        .empty-icon{font-size:64px;margin-bottom:16px}
+        @media (max-width:768px){
+            .container{padding:0 16px}
+            table{font-size:0.9rem}
+            th,td{padding:8px}
+            .btn{padding:6px 12px;font-size:0.85rem}
+        }
+    </style>
+</head>
+<body>
+<!-- Navbar -->
+<div class="navbar">
+    <div class="logo">Smart Rent House <span class="admin-badge">ADMIN</span></div>
+    <div class="nav-links">
+        <a th:href="@{/admin/dashboard}">Dashboard</a>
+        <a th:href="@{/admin/pending-properties}">Pending</a>
+        <a th:href="@{/admin/approved-properties}">Approved</a>
+        <a th:href="@{/logout}">Logout</a>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="container">
+    <h1 th:if="${status == 'PENDING'}">Pending Properties</h1>
+    <h1 th:if="${status == 'APPROVED'}">Approved Properties</h1>
+    <h1 th:if="${status == 'REJECTED'}">Rejected Properties</h1>
+    
+    <p class="lead" th:if="${status == 'PENDING'}">Review and verify these property listings</p>
+    <p class="lead" th:if="${status == 'APPROVED'}">Properties approved and currently listed</p>
+    <p class="lead" th:if="${status == 'REJECTED'}">Properties rejected during verification</p>
+
+    <!-- Messages -->
+    <div th:if="${message}" class="message message-success" th:text="${message}"></div>
+    <div th:if="${error}" class="message message-error" th:text="${error}"></div>
+
+    <!-- Empty State -->
+    <div th:if="${#lists.isEmpty(properties)}" class="empty-state">
+        <div class="empty-icon">📭</div>
+        <h2 th:if="${status == 'PENDING'}">No pending properties</h2>
+        <h2 th:if="${status == 'APPROVED'}">No approved properties</h2>
+        <h2 th:if="${status == 'REJECTED'}">No rejected properties</h2>
+    </div>
+
+    <!-- Properties Table -->
+    <div th:if="${!#lists.isEmpty(properties)}">
+        <table>
+            <thead>
+                <tr>
+                    <th>Property Name</th>
+                    <th>Owner Name</th>
+                    <th>Address</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="property : ${properties}">
+                    <td th:text="${property.name}">Property Name</td>
+                    <td th:text="${property.ownerName}">Owner Name</td>
+                    <td th:text="${property.address}">Address</td>
+                    <td th:text="'₹' + ${#numbers.formatDecimal(property.price, 1, 0)}">₹50,000</td>
+                    <td>
+                        <span th:if="${property.verificationStatus == 'PENDING'}" class="status-badge status-pending">
+                            ⏳ Pending
+                        </span>
+                        <span th:if="${property.verificationStatus == 'APPROVED'}" class="status-badge status-approved">
+                            ✓ Approved
+                        </span>
+                        <span th:if="${property.verificationStatus == 'REJECTED'}" class="status-badge status-rejected">
+                            ✗ Rejected
+                        </span>
+                    </td>
+                    <td th:text="${#dates.format(property.createdAt, 'MMM dd, yyyy')}">Jan 01, 2024</td>
+                    <td>
+                        <a th:href="@{/admin/property/{id}(id=${property.id})}" class="btn btn-view">View Details</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

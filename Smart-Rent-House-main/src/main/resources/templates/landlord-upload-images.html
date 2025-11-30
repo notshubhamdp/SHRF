@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Upload Property Images - Smart Rent House</title>
+    <style>
+        :root{--bg:#f6f8fb;--card:#ffffff;--accent:#4f46e5;--muted:#6b7280}
+        html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(135deg,#eef2ff 0%, #f8fafc 100%);color:#0f172a}
+        .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px}
+        .card{background:var(--card);border-radius:14px;box-shadow:0 10px 30px rgba(15,23,42,0.08);padding:48px;max-width:700px;width:100%}
+        h1{margin:0 0 8px;font-size:1.8rem}
+        p.lead{margin:0 0 24px;color:var(--muted)}
+        .upload-zone{border:2px dashed #e6e9ef;border-radius:12px;padding:48px;text-align:center;background:#fbfdff;cursor:pointer;transition:all 0.3s ease}
+        .upload-zone:hover{border-color:var(--accent);background:rgba(79,70,229,0.02)}
+        .upload-zone.dragover{border-color:var(--accent);background:rgba(79,70,229,0.06)}
+        .upload-icon{font-size:48px;margin-bottom:12px}
+        .upload-text{font-size:1rem;color:var(--muted);margin-bottom:4px}
+        .upload-hint{font-size:0.85rem;color:var(--muted)}
+        input[type="file"]{display:none}
+        .file-input-label{display:inline-block;padding:10px 16px;border-radius:8px;background:var(--accent);color:white;font-weight:600;cursor:pointer;margin-top:12px}
+        button{display:inline-block;padding:12px 32px;border-radius:10px;background:var(--accent);color:white;border:none;font-weight:600;cursor:pointer}
+        .alert{padding:12px;border-radius:8px;margin-bottom:16px}
+        .alert-error{background:#fff1f2;color:#9f1239}
+        .alert-info{background:#eff6ff;color:#0c4a6e}
+        .files-list{margin-top:16px;padding:12px;background:#f9fafb;border-radius:8px}
+        .file-item{padding:8px;background:white;border-radius:6px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+        .steps{display:flex;gap:12px;margin-bottom:24px;font-size:0.9rem}
+        .step{flex:1;padding:12px;border-radius:8px;background:#f3f4f6;text-align:center;color:var(--muted)}
+        .step.active{background:var(--accent);color:white}
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="card">
+        <div style="font-weight:700;color:var(--accent);margin-bottom:16px">Smart Rent House</div>
+        <h1>Upload Property Images</h1>
+        <p class="lead">Upload clear photos of your property from different angles.</p>
+
+        <div class="steps">
+            <div class="step">1. Details</div>
+            <div class="step active">2. Images</div>
+            <div class="step">3. Documents</div>
+        </div>
+
+        <div th:if="${message}" class="alert alert-info">
+            <p th:text="${message}"></p>
+        </div>
+        <div th:if="${error}" class="alert alert-error">
+            <p th:text="${error}"></p>
+        </div>
+
+        <form method="post" th:action="@{/landlord/upload-images/{propertyId}(propertyId=${property.id})}" enctype="multipart/form-data" id="imageForm">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+            <div class="upload-zone" id="dropZone">
+                <div class="upload-icon">🏠</div>
+                <div class="upload-text">Drag and drop your images here</div>
+                <div class="upload-hint">or click to select (JPG, PNG, max 5MB each)</div>
+                <label class="file-input-label" for="images">Choose Images</label>
+                <input type="file" id="images" name="images" accept="image/jpeg,image/png" multiple required />
+            </div>
+
+            <div id="filesList" class="files-list" style="display:none"></div>
+
+            <div style="display:flex;gap:12px;margin-top:28px">
+                <button type="submit">Next: Upload Documents</button>
+                <a th:href="@{/landlord/my-properties}" style="padding:12px 32px;border-radius:10px;background:transparent;border:1px solid var(--accent);color:var(--accent);text-decoration:none;font-weight:600;display:inline-block">Cancel</a>
+            </div>
+        </form>
+
+        <p style="color:var(--muted);font-size:0.9rem;margin-top:16px">
+            💡 Tip: Upload at least 5-10 clear images from different angles (exterior, living area, bedrooms, kitchen, bathroom).
+        </p>
+    </div>
+</div>
+
+<script>
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('images');
+    const filesList = document.getElementById('filesList');
+
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('dragover');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('dragover');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+        fileInput.files = e.dataTransfer.files;
+        updateFilesList();
+    });
+
+    dropZone.addEventListener('click', (e) => {
+        if (e.target !== fileInput) {
+            fileInput.click();
+        }
+    });
+
+    fileInput.addEventListener('change', updateFilesList);
+
+    function updateFilesList() {
+        if (fileInput.files.length === 0) {
+            filesList.style.display = 'none';
+            return;
+        }
+
+        filesList.innerHTML = '<strong>Selected Files:</strong>';
+        for (let file of fileInput.files) {
+            const item = document.createElement('div');
+            item.className = 'file-item';
+            item.innerHTML = `<span>✓ ${file.name}</span><span>${(file.size / 1024).toFixed(2)} KB</span>`;
+            filesList.appendChild(item);
+        }
+        filesList.style.display = 'block';
+    }
+</script>
+</body>
+</html>

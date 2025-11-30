@@ -64,10 +64,10 @@ public class RoleSelectionController {
         user.setRole(role);
         userRepository.save(user);
 
-        // If LANDLORD, go to home/dashboard
+        // If LANDLORD, go to property listing form
         if ("LANDLORD".equals(role)) {
-            redirectAttributes.addFlashAttribute("message", "Welcome, Landlord!");
-            return "redirect:/home";
+            redirectAttributes.addFlashAttribute("message", "Welcome, Landlord! Let's add your first property.");
+            return "redirect:/landlord/add-property";
         }
 
         // If TENANT, go to tenant-type selection

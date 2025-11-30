@@ -18,6 +18,7 @@
         a.link{color:var(--accent);text-decoration:none}
         .alert{padding:10px;border-radius:8px;margin-bottom:12px}
         .alert-success{background:#ecfdf5;color:#065f46}
+        .alert-error{background:#fff1f2;color:#9f1239}
     </style>
 </head>
 <body>
@@ -30,6 +31,11 @@
 
         <div th:if="${message}" class="alert alert-success">
             <p th:text="${message}"></p>
+        </div>
+
+        <!-- Display login error when authentication fails -->
+        <div th:if="${param.error}" class="alert alert-error">
+            <p>❌ Invalid email or password. Please try again.</p>
         </div>
 
         <form th:action="@{/login}" method="post">

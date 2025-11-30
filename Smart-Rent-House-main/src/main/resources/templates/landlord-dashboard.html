@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Landlord Dashboard - Smart Rent House</title>
+    <style>
+        :root{--accent:#4f46e5;--muted:#6b7280;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--bg:#f6f8fb;--card:#ffffff}
+        html,body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(135deg,#eef2ff 0%, #f8fafc 100%);color:#0f172a;min-height:100vh}
+        .navbar{background:var(--card);padding:16px 32px;box-shadow:0 2px 8px rgba(15,23,42,0.04);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
+        .logo{font-weight:700;color:var(--accent);font-size:1.2rem}
+        .nav-links{display:flex;gap:24px;align-items:center}
+        .nav-links a{color:var(--accent);text-decoration:none;font-weight:500;transition:all 0.2s}
+        .nav-links a:hover{opacity:0.7}
+        .logout-btn{background:var(--danger);color:white;padding:8px 16px;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.9rem}
+        .container{max-width:1200px;margin:0 auto;padding:32px}
+        h1{font-size:2rem;margin:0 0 8px}
+        .lead{color:var(--muted);margin:0 0 32px}
+        .dashboard-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;margin-bottom:32px}
+        .stat-card{background:var(--card);padding:24px;border-radius:12px;box-shadow:0 2px 8px rgba(15,23,42,0.06)}
+        .stat-icon{font-size:2rem;margin-bottom:12px}
+        .stat-number{font-size:2rem;font-weight:700;color:var(--accent);margin:8px 0}
+        .stat-label{color:var(--muted);font-size:0.9rem}
+        .section{background:var(--card);padding:24px;border-radius:12px;box-shadow:0 2px 8px rgba(15,23,42,0.06);margin-bottom:24px}
+        .section h2{margin:0 0 16px;font-size:1.3rem;border-bottom:2px solid var(--accent);padding-bottom:12px}
+        .action-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+        .action-card{background:linear-gradient(135deg,var(--accent) 0%,#6366f1 100%);color:white;padding:24px;border-radius:12px;text-decoration:none;text-align:center;transition:all 0.3s}
+        .action-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(79,70,229,0.2)}
+        .action-card-icon{font-size:2.5rem;margin-bottom:12px}
+        .action-card-title{font-weight:600;margin:8px 0}
+        .action-card-desc{font-size:0.9rem;opacity:0.9}
+        .properties-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+        .property-item{background:var(--card);border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(15,23,42,0.06);transition:all 0.3s}
+        .property-item:hover{box-shadow:0 8px 24px rgba(15,23,42,0.12)}
+        .property-header{padding:16px;background:linear-gradient(135deg,var(--accent) 0%,#6366f1 100%);color:white}
+        .property-name{font-size:1.1rem;font-weight:600;margin:0}
+        .property-address{font-size:0.85rem;opacity:0.9;margin:4px 0 0}
+        .property-body{padding:16px}
+        .property-info{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+        .info-item{font-size:0.9rem}
+        .info-label{color:var(--muted);font-weight:600}
+        .info-value{color:#0f172a;font-weight:500;margin-top:2px}
+        .status-badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:0.85rem;font-weight:600;margin-top:8px}
+        .status-pending{background:#fef3c7;color:#92400e}
+        .status-approved{background:#dcfce7;color:#166534}
+        .status-rejected{background:#fee2e2;color:#991b1b}
+        .empty-state{text-align:center;padding:40px;color:var(--muted)}
+        .empty-icon{font-size:3rem;margin-bottom:16px}
+        .quick-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px}
+        .quick-stat{background:var(--card);padding:16px;border-radius:8px;border-left:4px solid var(--accent)}
+        .quick-stat-value{font-size:1.5rem;font-weight:700;color:var(--accent)}
+        .quick-stat-label{color:var(--muted);font-size:0.9rem;margin-top:4px}
+        @media (max-width:768px){.container{padding:16px}.nav-links{gap:12px}.dashboard-grid{grid-template-columns:1fr}.action-grid{grid-template-columns:1fr}.properties-list{grid-template-columns:1fr}}
+    </style>
+</head>
+<body>
+<!-- Navbar -->
+<div class="navbar">
+    <div class="logo">🏠 Smart Rent House</div>
+    <div class="nav-links">
+        <a th:href="@{/landlord/my-properties}">My Properties</a>
+        <a th:href="@{/home}">Home</a>
+        <a th:href="@{/logout}" class="logout-btn">Logout</a>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="container">
+    <h1>Welcome, Landlord! 👋</h1>
+    <p class="lead">Manage your properties and track rental activities</p>
+
+    <!-- Quick Stats -->
+    <div class="quick-stats">
+        <div class="quick-stat">
+            <div class="quick-stat-value">0</div>
+            <div class="quick-stat-label">Total Properties</div>
+        </div>
+        <div class="quick-stat">
+            <div class="quick-stat-value">0</div>
+            <div class="quick-stat-label">Pending Review</div>
+        </div>
+        <div class="quick-stat">
+            <div class="quick-stat-value">0</div>
+            <div class="quick-stat-label">Approved & Live</div>
+        </div>
+        <div class="quick-stat">
+            <div class="quick-stat-value">0</div>
+            <div class="quick-stat-label">Rejections</div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard Grid -->
+    <div class="dashboard-grid">
+        <div class="stat-card">
+            <div class="stat-icon">📋</div>
+            <div class="stat-label">Active Listings</div>
+            <div class="stat-number">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-label">Pending Approval</div>
+            <div class="stat-number">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">✓</div>
+            <div class="stat-label">Approved</div>
+            <div class="stat-number">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-label">Inquiries</div>
+            <div class="stat-number">0</div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="section">
+        <h2>Quick Actions</h2>
+        <div class="action-grid">
+            <a th:href="@{/landlord/add-property}" class="action-card">
+                <div class="action-card-icon">➕</div>
+                <div class="action-card-title">Add New Property</div>
+                <div class="action-card-desc">List a new property for rent</div>
+            </a>
+            <a th:href="@{/landlord/my-properties}" class="action-card" style="background:linear-gradient(135deg,var(--success) 0%,#059669 100%)">
+                <div class="action-card-icon">📋</div>
+                <div class="action-card-title">My Properties</div>
+                <div class="action-card-desc">View and manage all listings</div>
+            </a>
+            <a href="#" class="action-card" style="background:linear-gradient(135deg,var(--warning) 0%,#d97706 100%)">
+                <div class="action-card-icon">💬</div>
+                <div class="action-card-title">Messages</div>
+                <div class="action-card-desc">Tenant inquiries & communications</div>
+            </a>
+            <a href="#" class="action-card" style="background:linear-gradient(135deg,#8b5cf6 0%,#7c3aed 100%)">
+                <div class="action-card-icon">⚙️</div>
+                <div class="action-card-title">Settings</div>
+                <div class="action-card-desc">Account and preferences</div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Recent Properties Section -->
+    <div class="section">
+        <h2>Your Properties</h2>
+        <div class="properties-list">
+            <!-- Empty state -->
+            <div style="grid-column:1/-1">
+                <div class="empty-state">
+                    <div class="empty-icon">🏠</div>
+                    <h3>No properties listed yet</h3>
+                    <p>Start by adding your first property to begin earning rental income</p>
+                    <a th:href="@{/landlord/add-property}" style="display:inline-block;margin-top:16px;padding:12px 24px;background:var(--accent);color:white;border-radius:8px;text-decoration:none;font-weight:600">Add Your First Property</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Information Section -->
+    <div class="section">
+        <h2>📚 How It Works</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px">
+            <div style="padding:16px;background:#f9fafb;border-radius:8px">
+                <div style="font-weight:700;color:var(--accent);margin-bottom:8px">1. Add Property</div>
+                <p style="margin:0;color:var(--muted);font-size:0.9rem">Fill in property details, upload images and ownership documents</p>
+            </div>
+            <div style="padding:16px;background:#f9fafb;border-radius:8px">
+                <div style="font-weight:700;color:var(--accent);margin-bottom:8px">2. Verification</div>
+                <p style="margin:0;color:var(--muted);font-size:0.9rem">Our admin team reviews your documents and verifies ownership</p>
+            </div>
+            <div style="padding:16px;background:#f9fafb;border-radius:8px">
+                <div style="font-weight:700;color:var(--accent);margin-bottom:8px">3. Go Live</div>
+                <p style="margin:0;color:var(--muted);font-size:0.9rem">Once approved, your property appears in tenant listings</p>
+            </div>
+            <div style="padding:16px;background:#f9fafb;border-radius:8px">
+                <div style="font-weight:700;color:var(--accent);margin-bottom:8px">4. Manage</div>
+                <p style="margin:0;color:var(--muted);font-size:0.9rem">Receive inquiries, communicate with tenants, manage bookings</p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

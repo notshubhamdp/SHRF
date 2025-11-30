@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Property Details - Admin Review - Smart Rent House</title>
+    <style>
+        :root{--bg:#f6f8fb;--card:#ffffff;--accent:#4f46e5;--muted:#6b7280;--success:#10b981;--warning:#f59e0b;--danger:#ef4444}
+        html,body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(135deg,#eef2ff 0%, #f8fafc 100%);color:#0f172a}
+        .navbar{background:#fff;padding:16px 32px;box-shadow:0 2px 8px rgba(15,23,42,0.04);display:flex;justify-content:space-between;align-items:center}
+        .logo{font-weight:700;color:var(--accent)}
+        .nav-links{display:flex;gap:24px}
+        .nav-links a{color:var(--accent);text-decoration:none;font-weight:500}
+        .admin-badge{background:var(--danger);color:white;padding:4px 8px;border-radius:4px;font-size:0.75rem;font-weight:600}
+        .container{max-width:1200px;margin:32px auto;padding:0 32px}
+        .back-link{color:var(--accent);text-decoration:none;font-weight:600;display:inline-block;margin-bottom:24px}
+        .back-link:hover{text-decoration:underline}
+        h1{font-size:2rem;margin:0 0 8px}
+        .lead{color:var(--muted);margin:0 0 32px}
+        .grid{display:grid;grid-template-columns:2fr 1fr;gap:32px}
+        .section{background:var(--card);padding:24px;border-radius:12px;box-shadow:0 2px 8px rgba(15,23,42,0.06);margin-bottom:24px}
+        .section h2{margin:0 0 16px;font-size:1.3rem;border-bottom:2px solid var(--accent);padding-bottom:12px}
+        .property-info{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+        .info-item{padding:12px 0}
+        .info-label{color:var(--muted);font-size:0.9rem;font-weight:600}
+        .info-value{font-size:1.1rem;font-weight:500}
+        .gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:12px}
+        .gallery-item{width:100%;height:150px;background:#f3f4f6;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:32px}
+        .document-list{list-style:none;padding:0;margin:0}
+        .document-item{padding:8px;background:#f3f4f6;margin-bottom:8px;border-radius:6px;display:flex;align-items:center;gap:8px}
+        .btn{display:inline-block;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;cursor:pointer;border:none}
+        .btn-approve{background:var(--success);color:white}
+        .btn-approve:hover{opacity:0.9}
+        .btn-reject{background:var(--danger);color:white}
+        .btn-reject:hover{opacity:0.9}
+        .btn-back{background:var(--accent);color:white}
+        .btn-back:hover{opacity:0.9}
+        .action-buttons{display:flex;gap:12px;margin-top:16px;flex-wrap:wrap}
+        .landlord-card{background:#f9fafb;padding:16px;border-radius:8px;border-left:3px solid var(--accent)}
+        .status-badge{display:inline-block;padding:6px 12px;border-radius:20px;font-size:0.85rem;font-weight:600}
+        .status-pending{background:#fef3c7;color:#92400e}
+        .status-approved{background:#dcfce7;color:#166534}
+        .status-rejected{background:#fee2e2;color:#991b1b}
+        .form-group{margin-bottom:16px}
+        label{display:block;margin-bottom:6px;font-weight:600}
+        textarea{width:100%;padding:12px;border:1px solid #e5e7eb;border-radius:6px;font-family:inherit;resize:vertical;min-height:100px}
+        .message{padding:12px 16px;border-radius:8px;margin-bottom:16px}
+        .message-error{background:#fee2e2;color:#991b1b}
+        @media (max-width:768px){.container{padding:0 16px}.grid{grid-template-columns:1fr}.property-info{grid-template-columns:1fr}.gallery{grid-template-columns:repeat(2,1fr)}.action-buttons{flex-direction:column}.btn{width:100%;text-align:center}}
+    </style>
+</head>
+<body>
+<!-- Navbar -->
+<div class="navbar">
+    <div class="logo">Smart Rent House <span class="admin-badge">ADMIN</span></div>
+    <div class="nav-links">
+        <a th:href="@{/admin/dashboard}">Dashboard</a>
+        <a th:href="@{/admin/pending-properties}">Pending</a>
+        <a th:href="@{/admin/approved-properties}">Approved</a>
+        <a th:href="@{/logout}">Logout</a>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="container">
+    <a th:href="@{/admin/pending-properties}" class="back-link">← Back to Pending Properties</a>
+
+    <h1 th:text="${property.name}">Property Name</h1>
+    <p class="lead" th:text="${property.address}">Address</p>
+
+    <div class="grid">
+        <!-- Left Column: Property Details -->
+        <div>
+            <!-- Property Information -->
+            <div class="section">
+                <h2>Property Information</h2>
+                <div class="property-info">
+                    <div class="info-item">
+                        <div class="info-label">Owner Name</div>
+                        <div class="info-value" th:text="${property.ownerName}">Owner Name</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Monthly Rent</div>
+                        <div class="info-value" th:text="'₹' + ${#numbers.formatDecimal(property.price, 1, 0)}">₹50,000</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Full Address</div>
+                        <div class="info-value" th:text="${property.address}">Address</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">City</div>
+                        <div class="info-value" th:text="${property.city}">City</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">State</div>
+                        <div class="info-value" th:text="${property.state}">State</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Pin Code</div>
+                        <div class="info-value" th:text="${property.pincode}">400001</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Status</div>
+                        <div class="info-value">
+                            <span th:if="${property.verificationStatus == 'PENDING'}" class="status-badge status-pending">
+                                ⏳ Pending Verification
+                            </span>
+                            <span th:if="${property.verificationStatus == 'APPROVED'}" class="status-badge status-approved">
+                                ✓ Approved
+                            </span>
+                            <span th:if="${property.verificationStatus == 'REJECTED'}" class="status-badge status-rejected">
+                                ✗ Rejected
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top:16px;padding-top:16px;border-top:1px solid #e5e7eb">
+                    <div class="info-label">Description</div>
+                    <div class="info-value" style="margin-top:8px" th:text="${property.description}">Property description goes here</div>
+                </div>
+                <div style="margin-top:16px;padding-top:16px;border-top:1px solid #e5e7eb">
+                    <div class="info-label">📍 Location Coordinates</div>
+                    <div class="info-value" style="margin-top:8px">
+                        Latitude: <span th:text="${property.latitude}">19.0760</span><br>
+                        Longitude: <span th:text="${property.longitude}">72.8777</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Property Images -->
+            <div class="section">
+                <h2>Property Images</h2>
+                <p style="color:var(--muted);font-size:0.9rem">Uploaded property images for verification</p>
+                <div class="gallery">
+                    <div th:if="${#arrays.isEmpty(imagePaths)}" style="grid-column:1/-1;text-align:center;padding:24px">
+                        <div style="font-size:32px;margin-bottom:8px">📸</div>
+                        <p style="color:var(--muted)">No images uploaded</p>
+                    </div>
+                    <div th:each="imagePath : ${imagePaths}" class="gallery-item">
+                        📷
+                    </div>
+                </div>
+            </div>
+
+            <!-- Property Documents -->
+            <div class="section">
+                <h2>Ownership Documents</h2>
+                <p style="color:var(--muted);font-size:0.9rem">Documents uploaded for property verification</p>
+                <div th:if="${#arrays.isEmpty(documentPaths)}" style="text-align:center;padding:24px;color:var(--muted)">
+                    <div style="font-size:32px;margin-bottom:8px">📄</div>
+                    <p>No documents uploaded</p>
+                </div>
+                <ul th:if="${!#arrays.isEmpty(documentPaths)}" class="document-list">
+                    <li th:each="docPath : ${documentPaths}" class="document-item">
+                        📄 <span th:text="${docPath}">document.pdf</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Right Column: Verification Section -->
+        <div>
+            <!-- Landlord Information -->
+            <div class="section">
+                <h2>Landlord Information</h2>
+                <div class="landlord-card">
+                    <p><strong th:text="${landlord.firstName + ' ' + landlord.lastName}">John Doe</strong></p>
+                    <p style="margin:8px 0;color:var(--muted)">📧 <span th:text="${landlord.email}">john@example.com</span></p>
+                    <p style="margin:8px 0;color:var(--muted)">🏠 <span th:text="${landlord.role}">LANDLORD</span></p>
+                </div>
+            </div>
+
+            <!-- Verification Actions (Only for PENDING) -->
+            <div th:if="${property.verificationStatus == 'PENDING'}" class="section">
+                <h2>Verification Actions</h2>
+                
+                <!-- Approve Form -->
+                <form th:action="@{/admin/property/{id}/approve(id=${property.id})}" method="POST" style="margin-bottom:24px">
+                    <div class="form-group">
+                        <label for="notes">Approval Notes (Optional)</label>
+                        <textarea id="notes" name="notes" placeholder="Add any notes about this approval..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-approve" style="width:100%">✓ Approve Property</button>
+                </form>
+
+                <!-- Reject Form -->
+                <form th:action="@{/admin/property/{id}/reject(id=${property.id})}" method="POST" onsubmit="return confirm('Are you sure you want to reject this property?');">
+                    <div class="form-group">
+                        <label for="rejectionReason">Rejection Reason (Required)</label>
+                        <textarea id="rejectionReason" name="rejectionReason" placeholder="Explain why this property is being rejected..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-reject" style="width:100%">✗ Reject Property</button>
+                </form>
+            </div>
+
+            <!-- Show Admin Notes (for non-PENDING) -->
+            <div th:if="${property.adminNotes && property.verificationStatus != 'PENDING'}" class="section">
+                <h2>Admin Notes</h2>
+                <div style="background:#f3f4f6;padding:12px;border-radius:6px;color:var(--muted)">
+                    <p th:text="${property.adminNotes}">Admin notes appear here</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

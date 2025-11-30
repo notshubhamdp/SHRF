@@ -27,8 +27,14 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         if (user != null && (user.getRole() == null || user.getRole().isEmpty())) {
             // Redirect to role selection if role not set
             response.sendRedirect("/role-selection");
+        } else if (user != null && "LANDLORD".equals(user.getRole())) {
+            // Redirect landlords to their dashboard
+            response.sendRedirect("/landlord-dashboard");
+        } else if (user != null && "TENANT".equals(user.getRole())) {
+            // Redirect tenants to their dashboard
+            response.sendRedirect("/tenant-dashboard");
         } else {
-            // Redirect to home if role is already set
+            // Default redirect
             response.sendRedirect("/home");
         }
     }

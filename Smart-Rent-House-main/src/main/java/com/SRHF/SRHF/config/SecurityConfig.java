@@ -24,8 +24,12 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(req -> req
-                    .requestMatchers("/register/**", "/login", "/forgot-password/**", "/css/**", "/js/**", "/images/**").permitAll()
+                    .requestMatchers("/", "/register/**", "/login", "/forgot-password/**", "/css/**", "/js/**", "/images/**", "/uploads/**").permitAll()
                     .requestMatchers("/role-selection/**").authenticated()
+                    .requestMatchers("/landlord/**").authenticated()
+                    .requestMatchers("/landlord-dashboard").authenticated()
+                    .requestMatchers("/tenant-dashboard").authenticated()
+                    .requestMatchers("/admin/**").hasRole("ADMIN")
                     .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
