@@ -21,5 +21,15 @@ spring:
             starttls:
               enable: true
               required: true
+
+    # Multipart file upload settings
+    servlet:
+        multipart:
+            max-file-size: 50MB
+            max-request-size: 50MB
+
 server:
     port: 8085
+    tomcat:
+        # Allow uploads up to 50 MB (bytes).
+        max-swallow-size: 52428800

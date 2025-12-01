@@ -57,6 +57,15 @@
         .quick-stat-value{font-size:1.5rem;font-weight:700;color:var(--accent)}
         .quick-stat-label{color:var(--muted);font-size:0.9rem;margin-top:4px}
         @media (max-width:768px){.container{padding:16px}.nav-links{gap:12px}.dashboard-grid{grid-template-columns:1fr}.action-grid{grid-template-columns:1fr}.properties-list{grid-template-columns:1fr}}
+        
+        /* FOOTER */
+        .footer{background:#0f172a;color:white;padding:60px 32px;margin-top:60px}
+        .footer-content{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:32px;margin-bottom:32px}
+        .footer-section h4{font-size:1rem;margin-bottom:16px;color:#fff}
+        .footer-section a{color:rgba(255,255,255,0.7);text-decoration:none;display:block;margin:8px 0;transition:all 0.2s}
+        .footer-section a:hover{color:white}
+        .footer-bottom{border-top:1px solid rgba(255,255,255,0.1);padding-top:32px;text-align:center;color:rgba(255,255,255,0.7)}
+        @media (max-width:768px){.footer{padding:40px 16px}}
     </style>
 </head>
 <body>
@@ -576,6 +585,37 @@
             });
         });
     </script>
-</body>
 
-</html>
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>🏠 Smart Rent House</h4>
+                <p style="color:rgba(255,255,255,0.7);margin:8px 0;line-height:1.6">Your trusted platform for finding and listing rental properties in India.</p>
+            </div>
+            <div class="footer-section">
+                <h4>For Tenants</h4>
+                <a href="/tenant-dashboard">Browse Properties</a>
+                <a href="#">My Favorites</a>
+                <a href="#">Saved Searches</a>
+                <a href="#">My Bookings</a>
+            </div>
+            <div class="footer-section">
+                <h4>For Landlords</h4>
+                <a href="/landlord-dashboard">List Property</a>
+                <a href="#">Manage Properties</a>
+                <a href="#">Tenant Inquiries</a>
+                <a href="#">Payments</a>
+            </div>
+            <div class="footer-section">
+                <h4>Support</h4>
+                <a href="#">Help Center</a>
+                <a href="#">Contact Us</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms & Conditions</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Smart Rent House. All rights reserved. | Built with ❤️ for renters and landlords</p>
+        </div>
+    </footer>
