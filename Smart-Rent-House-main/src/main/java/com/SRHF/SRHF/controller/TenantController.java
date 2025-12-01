@@ -49,6 +49,12 @@ public class TenantController {
         }
     }
 
+    @GetMapping("/test")
+    public String test() {
+        logger.info("TenantController is working!");
+        return "Tenant controller is loaded and working!";
+    }
+
     @PostMapping("/profile/update")
     public String updateProfile(
             @ModelAttribute("tenant") User formTenant,
