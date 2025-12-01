@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tenant Profile</title>
+    <link rel="stylesheet" th:href="@{/css/default-ui.css}" />
+    <style>
+        .profile-container { max-width:900px; margin:40px auto; padding:20px; background:#fff; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.08);} 
+        .profile-grid { display:grid; grid-template-columns: 1fr 320px; gap:20px; }
+        .form-row { display:flex; gap:12px; }
+        .form-row > div { flex:1 }
+        .avatar { width:280px; text-align:center }
+        .avatar img { width:200px; height:200px; object-fit:cover; border-radius:50%; border:1px solid #ddd }
+        .small { font-size:0.9rem; color:#666 }
+        .btn { display:inline-block; padding:10px 18px; background:#2a6fdb; color:#fff; border-radius:6px; text-decoration:none }
+        .btn-secondary { background:#888 }
+        label { display:block; margin-bottom:6px; font-weight:600 }
+        input[type=file] { margin-top:8px }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="profile-container">
+            <h2>Tenant Profile</h2>
+            <p class="small">Update your profile details below. Fields marked with * are required.</p>
+
+            <form th:action="@{/tenant/profile/update}" th:object="${tenant}" method="post" enctype="multipart/form-data">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                <div class="profile-grid">
+                    <div>
+                        <div class="form-row">
+                            <div>
+                                <label for="firstName">First name *</label>
+                                <input id="firstName" type="text" th:field="*{firstName}" placeholder="First name" required />
+                            </div>
+                            <div>
+                                <label for="lastName">Last name *</label>
+                                <input id="lastName" type="text" th:field="*{lastName}" placeholder="Last name" required />
+                            </div>
+                        </div>
+
+                        <div class="form-row" style="margin-top:12px">
+                            <div>
+                                <label for="email">Email *</label>
+                                <input id="email" type="email" th:field="*{email}" placeholder="you@example.com" readonly />
+                            </div>
+                            <div>
+                                <label for="phone">Phone</label>
+                                <input id="phone" type="tel" th:field="*{phone}" placeholder="(123) 456-7890" />
+                            </div>
+                        </div>
+
+                        <div style="margin-top:12px">
+                            <label for="address">Address</label>
+                            <input id="address" type="text" th:field="*{address}" placeholder="Street address" />
+                        </div>
+
+                        <div class="form-row" style="margin-top:12px">
+                            <div>
+                                <label for="city">City</label>
+                                <input id="city" type="text" th:field="*{city}" />
+                            </div>
+                            <div>
+                                <label for="state">State</label>
+                                <input id="state" type="text" th:field="*{state}" />
+                            </div>
+                            <div>
+                                <label for="zip">ZIP</label>
+                                <input id="zip" type="text" th:field="*{zip}" />
+                            </div>
+                        </div>
+
+                        <div class="form-row" style="margin-top:12px">
+                            <div>
+                                <label for="dateOfBirth">Date of birth</label>
+                                <input id="dateOfBirth" type="date" th:field="*{dateOfBirth}" />
+                            </div>
+                            <div>
+                                <label for="gender">Gender</label>
+                                <select id="gender" th:field="*{gender}">
+                                    <option th:value="">-- Select --</option>
+                                    <option th:value="MALE">Male</option>
+                                    <option th:value="FEMALE">Female</option>
+                                    <option th:value="OTHER">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div style="margin-top:12px">
+                            <label for="bio">About you</label>
+                            <textarea id="bio" rows="4" th:field="*{bio}" placeholder="Tell us a bit about yourself"></textarea>
+                        </div>
+
+                        <div style="margin-top:18px">
+                            <button type="submit" class="btn">Save changes</button>
+                            <a th:href="@{/tenant/dashboard}" class="btn btn-secondary" style="margin-left:8px">Cancel</a>
+                        </div>
+                    </div>
+
+                    <div class="avatar">
+                        <div>
+                            <label>Profile photo</label>
+                            <img id="avatarPreview" th:src="${tenant.avatarPath} ?: @{/images/default-avatar.png}" alt="avatar preview" />
+                        </div>
+                        <div style="margin-top:12px">
+                            <input type="file" id="avatarFile" name="avatarFile" accept="image/*" />
+                            <p class="small">PNG, JPG up to 5MB. Upload to change your avatar.</p>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Simple image preview
+        (function(){
+            const fileInput = document.getElementById('avatarFile');
+            const preview = document.getElementById('avatarPreview');
+            if(!fileInput) return;
+            fileInput.addEventListener('change', function(e){
+                const f = e.target.files && e.target.files[0];
+                if(!f) return;
+                if(!f.type.startsWith('image/')) return;
+                const reader = new FileReader();
+                reader.onload = function(ev){ preview.src = ev.target.result; };
+                reader.readAsDataURL(f);
+            });
+        })();
+    </script>
+</body>
+</html>
