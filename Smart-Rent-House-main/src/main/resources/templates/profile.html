@@ -44,6 +44,7 @@
         <!-- Flash Messages -->
         <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
         <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+        <div th:if="${param.success}" class="alert alert-success">Changes saved successfully!</div>
 
         <!-- Avatar Section -->
         <div class="avatar-section">
@@ -57,9 +58,8 @@
         </div>
 
         <!-- Profile Form -->
-        <form th:action="@{/profile/update}" th:object="${tenant}" method="post" enctype="multipart/form-data">
+        <form th:action="@{/profile/update}" method="post" enctype="multipart/form-data" id="profileForm">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-            <input type="hidden" name="avatarFile" id="avatarFileHidden" />
 
             <!-- Basic Information -->
             <div class="form-section">
@@ -172,7 +172,7 @@
         // Handle file input and preview
         const fileInput = document.getElementById('avatarFile');
         const preview = document.getElementById('avatarPreview');
-        const hiddenInput = document.getElementById('avatarFileHidden');
+        const profileForm = document.getElementById('profileForm');
 
         fileInput.addEventListener('change', function(e) {
             const file = e.target.files[0];
@@ -180,6 +180,7 @@
             
             if (!file.type.startsWith('image/')) {
                 alert('Please select an image file');
+                fileInput.value = '';
                 return;
             }
 
@@ -188,6 +189,12 @@
                 preview.src = event.target.result;
             };
             reader.readAsDataURL(file);
+        });
+
+        // Form submission handler
+        profileForm.addEventListener('submit', function(e) {
+            // The form will automatically include the file from the file input
+            console.log('Form submitted with file:', fileInput.files.length > 0 ? fileInput.files[0].name : 'No file');
         });
     </script>
 </body>
