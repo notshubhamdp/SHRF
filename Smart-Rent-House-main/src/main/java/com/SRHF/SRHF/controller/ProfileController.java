@@ -58,7 +58,16 @@ public class ProfileController {
 
     @PostMapping("/update")
     public String updateProfile(
-            @ModelAttribute("tenant") User formTenant,
+            @RequestParam(value = "firstName", required = false) String firstName,
+            @RequestParam(value = "lastName", required = false) String lastName,
+            @RequestParam(value = "phone", required = false) String phone,
+            @RequestParam(value = "address", required = false) String address,
+            @RequestParam(value = "city", required = false) String city,
+            @RequestParam(value = "state", required = false) String state,
+            @RequestParam(value = "zip", required = false) String zip,
+            @RequestParam(value = "dateOfBirth", required = false) String dateOfBirth,
+            @RequestParam(value = "gender", required = false) String gender,
+            @RequestParam(value = "bio", required = false) String bio,
             @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile,
             Authentication authentication,
             RedirectAttributes redirectAttributes) {
@@ -68,17 +77,25 @@ public class ProfileController {
             User user = userRepository.findByemail(email)
                     .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-            // Update allowed fields
-            if (formTenant.getFirstName() != null) user.setFirstName(formTenant.getFirstName());
-            if (formTenant.getLastName() != null) user.setLastName(formTenant.getLastName());
-            if (formTenant.getPhone() != null) user.setPhone(formTenant.getPhone());
-            if (formTenant.getAddress() != null) user.setAddress(formTenant.getAddress());
-            if (formTenant.getCity() != null) user.setCity(formTenant.getCity());
-            if (formTenant.getState() != null) user.setState(formTenant.getState());
-            if (formTenant.getZip() != null) user.setZip(formTenant.getZip());
-            if (formTenant.getDateOfBirth() != null) user.setDateOfBirth(formTenant.getDateOfBirth());
-            if (formTenant.getGender() != null) user.setGender(formTenant.getGender());
-            if (formTenant.getBio() != null) user.setBio(formTenant.getBio());
+            // Update fields if provided
+            if (firstName != null && !firstName.trim().isEmpty()) user.setFirstName(firstName);
+            if (lastName != null && !lastName.trim().isEmpty()) user.setLastName(lastName);
+            if (phone != null && !phone.trim().isEmpty()) user.setPhone(phone);
+            if (address != null && !address.trim().isEmpty()) user.setAddress(address);
+            if (city != null && !city.trim().isEmpty()) user.setCity(city);
+            if (state != null && !state.trim().isEmpty()) user.setState(state);
+            if (zip != null && !zip.trim().isEmpty()) user.setZip(zip);
+            if (gender != null && !gender.trim().isEmpty()) user.setGender(gender);
+            if (bio != null && !bio.trim().isEmpty()) user.setBio(bio);
+            
+            // Handle date of birth
+            if (dateOfBirth != null && !dateOfBirth.trim().isEmpty()) {
+                try {
+                    user.setDateOfBirth(java.time.LocalDate.parse(dateOfBirth));
+                } catch (Exception e) {
+                    logger.warn("Invalid date format: {}", dateOfBirth);
+                }
+            }
 
             // Handle avatar upload
             if (avatarFile != null && !avatarFile.isEmpty()) {
