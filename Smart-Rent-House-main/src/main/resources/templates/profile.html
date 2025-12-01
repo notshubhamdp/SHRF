@@ -58,7 +58,7 @@
         </div>
 
         <!-- Profile Form -->
-        <form th:action="@{/profile/update}" method="post" enctype="multipart/form-data" id="profileForm">
+        <form th:action="@{/profile/save}" method="post" enctype="multipart/form-data" id="profileForm">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
             <!-- Basic Information -->
