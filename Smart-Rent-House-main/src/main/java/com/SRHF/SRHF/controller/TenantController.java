@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -24,6 +26,7 @@ public class TenantController {
 
     private final UserRepository userRepository;
     private static final String UPLOAD_DIR = "uploads/avatars";
+    private static final Logger logger = LoggerFactory.getLogger(TenantController.class);
 
     public TenantController(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -31,12 +34,19 @@ public class TenantController {
 
     @GetMapping("/profile")
     public String showProfile(Authentication authentication, Model model) {
-        String email = authentication.getName();
-        User user = userRepository.findByemail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        try {
+            String email = authentication.getName();
+            logger.info("Loading profile for user: {}", email);
+            User user = userRepository.findByemail(email)
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        model.addAttribute("tenant", user);
-        return "profile";
+            model.addAttribute("tenant", user);
+            logger.info("Profile loaded successfully for user: {}", email);
+            return "profile";
+        } catch (Exception e) {
+            logger.error("Error loading profile", e);
+            throw e;
+        }
     }
 
     @PostMapping("/profile/update")
