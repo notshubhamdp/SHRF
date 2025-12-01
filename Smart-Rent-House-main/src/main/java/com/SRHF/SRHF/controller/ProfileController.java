@@ -8,6 +8,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -20,6 +22,7 @@ public class ProfileController {
 
     private final UserRepository userRepository;
     private static final String UPLOAD_DIR = "uploads/avatars";
+    private static final Logger logger = LoggerFactory.getLogger(ProfileController.class);
 
     public ProfileController(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -27,12 +30,30 @@ public class ProfileController {
 
     @GetMapping
     public String showProfile(Authentication authentication, Model model) {
-        String email = authentication.getName();
-        User user = userRepository.findByemail(email)
-                .orElse(new User());
+        try {
+            if (authentication == null) {
+                logger.warn("No authentication found");
+                return "redirect:/login";
+            }
 
-        model.addAttribute("tenant", user);
-        return "profile";
+            String email = authentication.getName();
+            logger.info("Loading profile for: {}", email);
+
+            User user = userRepository.findByemail(email).orElse(null);
+            
+            if (user == null) {
+                logger.warn("User not found: {}", email);
+                user = new User();
+                user.setEmail(email);
+            }
+
+            model.addAttribute("tenant", user);
+            logger.info("Profile page loaded successfully");
+            return "profile";
+        } catch (Exception e) {
+            logger.error("Error loading profile page", e);
+            return "redirect:/login";
+        }
     }
 
     @PostMapping("/update")
@@ -42,44 +63,53 @@ public class ProfileController {
             Authentication authentication,
             RedirectAttributes redirectAttributes) {
 
-        String email = authentication.getName();
-        User user = userRepository.findByemail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        try {
+            String email = authentication.getName();
+            User user = userRepository.findByemail(email)
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        // Update allowed fields
-        user.setFirstName(formTenant.getFirstName());
-        user.setLastName(formTenant.getLastName());
-        user.setPhone(formTenant.getPhone());
-        user.setAddress(formTenant.getAddress());
-        user.setCity(formTenant.getCity());
-        user.setState(formTenant.getState());
-        user.setZip(formTenant.getZip());
-        user.setDateOfBirth(formTenant.getDateOfBirth());
-        user.setGender(formTenant.getGender());
-        user.setBio(formTenant.getBio());
+            // Update allowed fields
+            if (formTenant.getFirstName() != null) user.setFirstName(formTenant.getFirstName());
+            if (formTenant.getLastName() != null) user.setLastName(formTenant.getLastName());
+            if (formTenant.getPhone() != null) user.setPhone(formTenant.getPhone());
+            if (formTenant.getAddress() != null) user.setAddress(formTenant.getAddress());
+            if (formTenant.getCity() != null) user.setCity(formTenant.getCity());
+            if (formTenant.getState() != null) user.setState(formTenant.getState());
+            if (formTenant.getZip() != null) user.setZip(formTenant.getZip());
+            if (formTenant.getDateOfBirth() != null) user.setDateOfBirth(formTenant.getDateOfBirth());
+            if (formTenant.getGender() != null) user.setGender(formTenant.getGender());
+            if (formTenant.getBio() != null) user.setBio(formTenant.getBio());
 
-        // Handle avatar upload
-        if (avatarFile != null && !avatarFile.isEmpty()) {
-            try {
-                Path uploadPath = Paths.get(UPLOAD_DIR);
-                if (!Files.exists(uploadPath)) {
-                    Files.createDirectories(uploadPath);
+            // Handle avatar upload
+            if (avatarFile != null && !avatarFile.isEmpty()) {
+                try {
+                    Path uploadPath = Paths.get(UPLOAD_DIR);
+                    if (!Files.exists(uploadPath)) {
+                        Files.createDirectories(uploadPath);
+                    }
+
+                    String fileName = user.getId() + "_" + System.currentTimeMillis() + "_" + avatarFile.getOriginalFilename();
+                    Path filePath = uploadPath.resolve(fileName);
+                    Files.write(filePath, avatarFile.getBytes());
+
+                    user.setAvatarPath(filePath.toString());
+                    logger.info("Avatar uploaded: {}", filePath);
+
+                } catch (IOException e) {
+                    logger.error("Failed to upload avatar", e);
+                    redirectAttributes.addFlashAttribute("error", "Failed to upload avatar: " + e.getMessage());
+                    return "redirect:/profile";
                 }
-
-                String fileName = user.getId() + "_" + System.currentTimeMillis() + "_" + avatarFile.getOriginalFilename();
-                Path filePath = uploadPath.resolve(fileName);
-                Files.write(filePath, avatarFile.getBytes());
-
-                user.setAvatarPath(filePath.toString());
-
-            } catch (IOException e) {
-                redirectAttributes.addFlashAttribute("error", "Failed to upload avatar: " + e.getMessage());
-                return "redirect:/profile";
             }
-        }
 
-        userRepository.save(user);
-        redirectAttributes.addFlashAttribute("message", "Profile updated successfully");
-        return "redirect:/profile";
+            userRepository.save(user);
+            redirectAttributes.addFlashAttribute("message", "Profile updated successfully");
+            logger.info("Profile updated for: {}", email);
+            return "redirect:/profile";
+        } catch (Exception e) {
+            logger.error("Error updating profile", e);
+            redirectAttributes.addFlashAttribute("error", "Error updating profile: " + e.getMessage());
+            return "redirect:/profile";
+        }
     }
 }
