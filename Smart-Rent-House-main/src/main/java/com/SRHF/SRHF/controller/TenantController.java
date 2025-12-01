@@ -36,7 +36,7 @@ public class TenantController {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         model.addAttribute("tenant", user);
-        return "tenant-profile";
+        return "profile";
     }
 
     @PostMapping("/profile/update")
