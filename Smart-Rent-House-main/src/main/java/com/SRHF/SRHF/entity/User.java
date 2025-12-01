@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "users")
@@ -57,6 +58,33 @@ public class User  implements UserDetails {
 
     @Column(name = "document_path")
     private String documentPath; // path to uploaded student ID document
+
+    @Column(name = "phone")
+    private String phone;
+
+    @Column(name = "address")
+    private String address;
+
+    @Column(name = "city")
+    private String city;
+
+    @Column(name = "state")
+    private String state;
+
+    @Column(name = "zip")
+    private String zip;
+
+    @Column(name = "date_of_birth")
+    private LocalDate dateOfBirth;
+
+    @Column(name = "gender")
+    private String gender;
+
+    @Column(name = "bio", length = 1000)
+    private String bio;
+
+    @Column(name = "avatar_path")
+    private String avatarPath;
 
     public User() {
     }
@@ -175,5 +203,77 @@ public class User  implements UserDetails {
 
     public void setDocumentPath(String documentPath) {
         this.documentPath = documentPath;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getZip() {
+        return zip;
+    }
+
+    public void setZip(String zip) {
+        this.zip = zip;
+    }
+
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public String getAvatarPath() {
+        return avatarPath;
+    }
+
+    public void setAvatarPath(String avatarPath) {
+        this.avatarPath = avatarPath;
     }
 }
