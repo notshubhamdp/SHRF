@@ -1,32 +1,56 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Logout - Smart Rent House</title>
+    <title>Sign Out — Smart Rent House</title>
     <link rel="stylesheet" th:href="@{/css/default-ui.css}" />
     <style>
-        body{background:#f6f8fb;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif}
-        .center{max-width:640px;margin:80px auto;padding:32px;background:#fff;border-radius:10px;box-shadow:0 6px 20px rgba(15,23,42,0.06);text-align:center}
-        .muted{color:#6b7280;margin-bottom:18px}
-        .actions{display:flex;gap:12px;justify-content:center;margin-top:20px}
-        .btn-secondary{background:#6c757d;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none}
+        :root{--accent:#4f46e5;--accent-light:#6366f1;--muted:#6b7280;--bg:#f6f8fb;--card:#ffffff}
+        *{box-sizing:border-box}
+        html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg, #f3f4f6 0%, #f8fafc 100%);color:#0f172a}
+        .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px}
+        .card{width:100%;max-width:820px;background:linear-gradient(180deg,var(--card) 0%, #ffffff 100%);border-radius:12px;box-shadow:0 20px 40px rgba(15,23,42,0.08);display:flex;gap:32px;overflow:hidden}
+        .left{flex:1;padding:48px 36px;background:linear-gradient(135deg,rgba(79,70,229,0.06),rgba(99,102,241,0.03));display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
+        .right{flex:1;padding:48px 36px;display:flex;flex-direction:column;justify-content:center}
+        .logo{font-weight:700;color:var(--accent);display:flex;align-items:center;gap:10px;font-size:1.25rem}
+        .logo .icon{font-size:1.6rem}
+        .title{font-size:1.8rem;font-weight:800;margin:12px 0}
+        .desc{color:var(--muted);line-height:1.6}
+        .icon-round{width:96px;height:96px;border-radius:20px;background:linear-gradient(135deg,var(--accent),var(--accent-light));display:flex;align-items:center;justify-content:center;color:#fff;font-size:36px;box-shadow:0 8px 24px rgba(79,70,229,0.18)}
+        .actions{display:flex;gap:12px;margin-top:20px}
+        .btn{border:0;padding:12px 20px;border-radius:10px;font-weight:700;cursor:pointer}
+        .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;box-shadow:0 10px 30px rgba(79,70,229,0.14)}
+        .btn-outline{background:transparent;border:2px solid #e6e9f8;color:#0f172a}
+        .muted-small{color:var(--muted);font-size:0.95rem;margin-top:8px}
+        @media (max-width:900px){.card{flex-direction:column}.left,.right{padding:28px;text-align:center;align-items:center}.logo{justify-content:center}}
     </style>
 </head>
 <body>
-<div class="center">
-    <div style="font-size:48px">🔒</div>
-    <h1>Sign out</h1>
-    <p class="muted">Are you sure you want to sign out of your account? You will be returned to the home page.</p>
-
-    <form th:action="@{/logout}" method="post">
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-        <div class="actions">
-            <button type="submit" class="primary">Logout</button>
-            <a th:href="@{/tenant-dashboard}" class="btn-secondary">Cancel</a>
+<div class="wrap">
+    <div class="card">
+        <div class="left">
+            <div class="logo"><span class="icon">🏠</span> Smart Rent House</div>
+            <div style="height:18px"></div>
+            <div class="title">Secure Sign Out</div>
+            <div class="desc">You can safely sign out — your session will be closed and any sensitive data will be protected. If you want to come back, you'll be able to sign in again.</div>
+            <div class="muted-small">If you are on a public computer, remember to close the browser window after signing out.</div>
         </div>
-    </form>
 
+        <div class="right">
+            <div style="display:flex;flex-direction:column;align-items:center">
+                <div class="icon-round">🔒</div>
+                <h2 style="margin:18px 0 6px">Are you sure you want to logout?</h2>
+                <p class="muted-small">Click "Logout" to end your session. Click "Cancel" to stay signed in.</p>
+
+                <form th:action="@{/logout}" method="post" style="margin-top:18px;display:flex;gap:12px">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <button type="submit" class="btn btn-primary">Logout</button>
+                    <a th:href="@{/tenant-dashboard}" class="btn btn-outline" style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 </html>
