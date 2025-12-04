@@ -1,6 +1,8 @@
 package com.SRHF.SRHF.controller;
 
 import com.SRHF.SRHF.entity.User;
+import com.SRHF.SRHF.entity.Property;
+import java.util.List;
 import com.SRHF.SRHF.repository.UserRepository;
 import com.SRHF.SRHF.repository.PropertyRepository;
 import org.springframework.security.core.Authentication;
@@ -37,8 +39,28 @@ public class HomeController {
         if (!"LANDLORD".equals(user.getRole())) {
             return "redirect:/home";
         }
+        
+        // Load landlord properties and compute stats
+        List<Property> properties = propertyRepository.findByLandlordId(user.getId());
+
+        long totalProperties = properties.size();
+        long pendingCount = properties.stream().filter(p -> "PENDING".equals(p.getVerificationStatus())).count();
+        long approvedCount = properties.stream().filter(p -> "APPROVED".equals(p.getVerificationStatus())).count();
+        long rejectedCount = properties.stream().filter(p -> "REJECTED".equals(p.getVerificationStatus())).count();
+
+        // recent properties (most recent 6)
+        List<Property> recentProperties = properties.stream()
+                .sorted((a, b) -> Long.compare(b.getCreatedAt(), a.getCreatedAt()))
+                .limit(6)
+                .toList();
 
         model.addAttribute("user", user);
+        model.addAttribute("totalProperties", totalProperties);
+        model.addAttribute("pendingCount", pendingCount);
+        model.addAttribute("approvedCount", approvedCount);
+        model.addAttribute("rejectedCount", rejectedCount);
+        model.addAttribute("recentProperties", recentProperties);
+
         return "landlord-dashboard";
     }
 

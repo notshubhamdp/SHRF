@@ -72,19 +72,19 @@
     <!-- Quick Stats -->
     <div class="quick-stats">
         <div class="quick-stat">
-            <div class="quick-stat-value">0</div>
+            <div class="quick-stat-value" th:text="${totalProperties}">0</div>
             <div class="quick-stat-label">Total Properties</div>
         </div>
         <div class="quick-stat">
-            <div class="quick-stat-value">0</div>
+            <div class="quick-stat-value" th:text="${pendingCount}">0</div>
             <div class="quick-stat-label">Pending Review</div>
         </div>
         <div class="quick-stat">
-            <div class="quick-stat-value">0</div>
+            <div class="quick-stat-value" th:text="${approvedCount}">0</div>
             <div class="quick-stat-label">Approved & Live</div>
         </div>
         <div class="quick-stat">
-            <div class="quick-stat-value">0</div>
+            <div class="quick-stat-value" th:text="${rejectedCount}">0</div>
             <div class="quick-stat-label">Rejections</div>
         </div>
     </div>
@@ -94,17 +94,17 @@
         <div class="stat-card">
             <div class="stat-icon">📋</div>
             <div class="stat-label">Active Listings</div>
-            <div class="stat-number">0</div>
+            <div class="stat-number" th:text="${totalProperties}">0</div>
         </div>
         <div class="stat-card">
             <div class="stat-icon">⏳</div>
             <div class="stat-label">Pending Approval</div>
-            <div class="stat-number">0</div>
+            <div class="stat-number" th:text="${pendingCount}">0</div>
         </div>
         <div class="stat-card">
             <div class="stat-icon">✓</div>
             <div class="stat-label">Approved</div>
-            <div class="stat-number">0</div>
+            <div class="stat-number" th:text="${approvedCount}">0</div>
         </div>
         <div class="stat-card">
             <div class="stat-icon">👥</div>
@@ -132,7 +132,7 @@
                 <div class="action-card-title">Messages</div>
                 <div class="action-card-desc">Tenant inquiries & communications</div>
             </a>
-            <a href="#" class="action-card" style="background:linear-gradient(135deg,#8b5cf6 0%,#7c3aed 100%)">
+            <a th:href="@{/profile}" class="action-card" style="background:linear-gradient(135deg,#8b5cf6 0%,#7c3aed 100%)">
                 <div class="action-card-icon">⚙️</div>
                 <div class="action-card-title">Settings</div>
                 <div class="action-card-desc">Account and preferences</div>
@@ -143,8 +143,33 @@
     <!-- Recent Properties Section -->
     <div class="section">
         <h2>Your Properties</h2>
-        <div class="properties-list">
-            <!-- Empty state -->
+        <div class="properties-list" th:if="${!#lists.isEmpty(recentProperties)}">
+            <div th:each="prop : ${recentProperties}" class="property-item">
+                <div class="property-header">
+                    <p class="property-name" th:text="${prop.name}">Property Name</p>
+                    <p class="property-address" th:text="${prop.address}">Address</p>
+                </div>
+                <div class="property-body">
+                    <div class="property-info">
+                        <div class="info-item">
+                            <div class="info-label">Price</div>
+                            <div class="info-value" th:text="'₹' + ${#numbers.formatDecimal(prop.price, 1, 0)}">₹0</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Status</div>
+                            <div class="info-value">
+                                <span th:if="${prop.verificationStatus == 'PENDING'}" class="status-badge status-pending">⏳ Pending</span>
+                                <span th:if="${prop.verificationStatus == 'APPROVED'}" class="status-badge status-approved">✓ Approved</span>
+                                <span th:if="${prop.verificationStatus == 'REJECTED'}" class="status-badge status-rejected">✗ Rejected</span>
+                            </div>
+                        </div>
+                    </div>
+                    <a th:href="@{/landlord/my-properties}" class="btn" style="margin-top:12px;background:var(--accent);color:white;border-radius:6px;padding:8px 12px;">Manage</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="properties-list" th:if="${#lists.isEmpty(recentProperties)}">
             <div style="grid-column:1/-1">
                 <div class="empty-state">
                     <div class="empty-icon">🏠</div>

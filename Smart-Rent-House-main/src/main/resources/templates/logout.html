@@ -43,7 +43,7 @@
                 <h2 style="margin:18px 0 6px">Are you sure you want to logout?</h2>
                 <p class="muted-small">Click "Logout" to end your session. Click "Cancel" to stay signed in.</p>
 
-                <form th:action="@{/logout}" method="post" style="margin-top:18px;display:flex;gap:12px">
+                <form th:action="@{/perform_logout}" method="post" style="margin-top:18px;display:flex;gap:12px">
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                     <button type="submit" class="btn btn-primary">Logout</button>
                     <a th:href="@{/tenant-dashboard}" class="btn btn-outline" style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none">Cancel</a>

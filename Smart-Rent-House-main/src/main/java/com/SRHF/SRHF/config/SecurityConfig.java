@@ -39,7 +39,11 @@ public class SecurityConfig {
                         .successHandler(successHandler)
                         .permitAll()
                 )
-                .logout(logout -> logout.permitAll())
+                .logout(logout -> logout
+                    .logoutUrl("/perform_logout")
+                    .logoutSuccessUrl("/login?logout")
+                    .permitAll()
+                )
                 .userDetailsService(userDetailsService);
 
         return http.build();
