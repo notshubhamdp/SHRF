@@ -1,6 +1,8 @@
 package com.SRHF.SRHF.entity;
 
 import jakarta.persistence.*;
+import java.util.Set;
+import java.util.HashSet;
 
 @Entity
 @Table(name = "properties")
@@ -58,6 +60,9 @@ public class Property {
 
     @Column(name = "created_at")
     private Long createdAt; // Timestamp when property was created
+
+    @ManyToMany(mappedBy = "favoriteProperties")
+    private Set<User> favoredBy = new HashSet<>();
 
     public Property() {
     }
@@ -207,5 +212,13 @@ public class Property {
 
     public void setCreatedAt(Long createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Set<User> getFavoredBy() {
+        return favoredBy;
+    }
+
+    public void setFavoredBy(Set<User> favoredBy) {
+        this.favoredBy = favoredBy;
     }
 }

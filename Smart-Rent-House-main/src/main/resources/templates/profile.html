@@ -28,12 +28,6 @@
         /* PROFILE CARD */
         .profile-card{background:var(--card);padding:32px;border-radius:12px;box-shadow:0 2px 8px rgba(15,23,42,0.06)}
         
-        /* AVATAR SECTION */
-        .avatar-section{text-align:center;margin-bottom:40px}
-        .avatar-container{position:relative;width:150px;height:150px;margin:0 auto 20px;border-radius:50%;background:linear-gradient(135deg,#e0e7ff 0%,#f3e8ff 100%);border:3px solid var(--accent);display:flex;align-items:center;justify-content:center;overflow:hidden}
-        .avatar-preview{width:150px;height:150px;border-radius:50%;object-fit:cover;display:block;position:relative;z-index:1}
-        .avatar-fallback{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:60px;z-index:0}
-        
         /* FORM SECTIONS */
         .form-section{margin-bottom:32px}
         .form-section h2{font-size:1.2rem;margin:0 0 16px;color:#0f172a;border-bottom:2px solid var(--accent);padding-bottom:10px;font-weight:700}
@@ -46,9 +40,6 @@
         textarea{resize:vertical;min-height:100px}
         
         /* BUTTONS & ACTIONS */
-        .file-input-label{display:inline-block;cursor:pointer;font-weight:600;padding:10px 20px;background:linear-gradient(135deg,var(--accent),var(--accent-light));color:white;border-radius:6px;transition:all 0.2s}
-        .file-input-label:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(79,70,229,0.2)}
-        input[type="file"]{display:none}
         .form-actions{display:flex;gap:12px;margin-top:32px;padding-top:20px;border-top:1px solid #e5e7eb}
         .btn{padding:12px 24px;border:none;border-radius:6px;font-weight:600;cursor:pointer;font-size:1rem;transition:all 0.2s}
         .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-light));color:white;box-shadow:0 4px 12px rgba(79,70,229,0.2)}
@@ -60,6 +51,12 @@
         .alert{padding:12px 16px;border-radius:6px;margin-bottom:20px;font-weight:500}
         .alert-success{background:#dcfce7;color:#166534;border-left:4px solid #22c55e}
         .alert-error{background:#fee2e2;color:#991b1b;border-left:4px solid #ef4444}
+        
+        /* PROFILE PICTURE SECTION */
+        .profile-picture-section{text-align:center;margin-bottom:32px;padding-bottom:32px;border-bottom:2px solid #e5e7eb}
+        .profile-avatar{width:120px;height:120px;border-radius:50%;object-fit:cover;border:4px solid var(--accent);box-shadow:0 4px 12px rgba(79,70,229,0.15)}
+        .profile-picture-section h2{font-size:1rem;margin:16px 0 8px;color:#0f172a;font-weight:700}
+        .profile-picture-section p{color:var(--muted);font-size:0.9rem}
         
         /* FOOTER */
         .footer{background:#0f172a;color:white;padding:60px 32px;margin-top:60px}
@@ -107,21 +104,15 @@
 
         <!-- PROFILE CARD -->
         <div class="profile-card">
-            <!-- Avatar Section -->
-            <div class="avatar-section">
-                <div class="avatar-container">
-                    <img id="avatarPreview" class="avatar-preview" 
-                        th:src="${tenant?.avatarPath} ?: @{/images/default-avatar.png}"   />
-                    <div class="avatar-fallback">👤</div>
-                </div>
-                <div>
-                    <label for="avatarFile" class="file-input-label">Change Avatar</label>
-                    <input type="file" id="avatarFile" name="avatarFile" accept="image/*" />
-                </div>
+            <!-- Profile Picture Section -->
+            <div class="profile-picture-section">
+                <img th:src="@{/images/default-avatar.svg}" alt="Profile Picture" class="profile-avatar" />
+                <h2>Profile Picture</h2>
+                <p>Default avatar for all users</p>
             </div>
 
             <!-- Profile Form -->
-            <form th:action="@{/profile/update}" method="post" enctype="multipart/form-data" id="profileForm">
+            <form th:action="@{/profile/update}" method="post" id="profileForm">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
                 <!-- Basic Information -->
@@ -267,10 +258,7 @@
     </footer>
 
     <script>
-        const fileInput = document.getElementById('avatarFile');
-        const preview = document.getElementById('avatarPreview');
         const profileForm = document.getElementById('profileForm');
-        const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50 MB
         const clientError = document.getElementById('clientError');
 
         function showClientError(msg) {
@@ -282,39 +270,9 @@
             clientError.style.display = 'none';
         }
 
-        fileInput.addEventListener('change', function(e) {
-            hideClientError();
-            const file = e.target.files[0];
-            if (!file) return;
-
-            if (!file.type.startsWith('image/')) {
-                showClientError('Please select a valid image file.');
-                fileInput.value = '';
-                return;
-            }
-
-            if (file.size > MAX_FILE_SIZE) {
-                showClientError('Selected file is too large. Maximum allowed size is 50 MB.');
-                fileInput.value = '';
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                preview.src = event.target.result;
-            };
-            reader.readAsDataURL(file);
-        });
-
         profileForm.addEventListener('submit', function(e) {
             hideClientError();
-            const file = fileInput.files[0];
-            if (file && file.size > MAX_FILE_SIZE) {
-                e.preventDefault();
-                showClientError('File size exceeds 50 MB limit. Please choose a smaller file.');
-                return false;
-            }
-            console.log('Form submitted with file:', file ? file.name : 'No file');
+            console.log('Profile form submitted');
         });
     </script>
 </body>

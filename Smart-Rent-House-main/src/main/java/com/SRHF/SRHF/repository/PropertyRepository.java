@@ -2,6 +2,8 @@ package com.SRHF.SRHF.repository;
 
 import com.SRHF.SRHF.entity.Property;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -21,4 +23,8 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
 
     // Find a specific property by ID
     Optional<Property> findById(Long id);
+
+    // Find all favorite properties for a user
+    @Query("SELECT p FROM Property p JOIN p.favoredBy u WHERE u.id = :userId ORDER BY p.createdAt DESC")
+    List<Property> findFavoritesByUserId(@Param("userId") Long userId);
 }

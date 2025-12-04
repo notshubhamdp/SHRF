@@ -28,7 +28,7 @@ public class SecurityConfig {
                     .requestMatchers("/role-selection/**").authenticated()
                     .requestMatchers("/landlord/**").authenticated()
                     .requestMatchers("/landlord-dashboard").authenticated()
-                    .requestMatchers("/tenant-dashboard").authenticated()
+                    .requestMatchers("/tenant-dashboard","/profile/**").authenticated()
                     .requestMatchers("/admin/**").hasRole("ADMIN")
                     .anyRequest().authenticated()
                 )

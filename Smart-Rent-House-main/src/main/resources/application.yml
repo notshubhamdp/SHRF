@@ -2,7 +2,7 @@ spring:
     datasource:
         url: jdbc:mysql://localhost:3306/shrf_db?createDatabaseIfNotExist=true
         username: root
-        password: Arpit@123
+        password: shubham
         driver-class-name: com.mysql.cj.jdbc.Driver
 
     jpa:
@@ -22,14 +22,8 @@ spring:
               enable: true
               required: true
 
-    # Multipart file upload settings
-    servlet:
-        multipart:
-            max-file-size: 50MB
-            max-request-size: 50MB
+    
 
 server:
     port: 8085
-    tomcat:
-        # Allow uploads up to 50 MB (bytes).
-        max-swallow-size: 52428800
+   

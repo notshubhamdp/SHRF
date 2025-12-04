@@ -114,7 +114,7 @@
         <div class="stat-card">
             <div class="stat-icon">❤️</div>
             <div class="stat-label">Favorites</div>
-            <div class="stat-number">0</div>
+            <div class="stat-number" th:text="${favoriteProperties != null ? #lists.size(favoriteProperties) : '0'}">0</div>
         </div>
         <div class="stat-card">
             <div class="stat-icon">📝</div>
@@ -137,7 +137,7 @@
                 <div class="action-card-title">Search Properties</div>
                 <div class="action-card-desc">Find your next home</div>
             </div>
-            <a href="#" class="action-card" style="background:linear-gradient(135deg,var(--success) 0%,#059669 100%)">
+            <a href="#favorites" class="action-card" style="background:linear-gradient(135deg,var(--success) 0%,#059669 100%)">
                 <div class="action-card-icon">❤️</div>
                 <div class="action-card-title">My Favorites</div>
                 <div class="action-card-desc">Saved properties</div>
@@ -203,6 +203,64 @@
                     <div class="property-footer">
                         <button class="property-btn btn-details" onclick="alert('View Details - Coming Soon')">View Details</button>
                         <button class="property-btn btn-contact" onclick="alert('Contact Landlord - Coming Soon')">Contact</button>
+                        <form th:if="${user.isFavorite(property)}" th:action="@{/favorites/remove}" method="post" style="flex:0.5">
+                            <input type="hidden" name="propertyId" th:value="${property.id}" />
+                            <button type="submit" class="property-btn" style="background:#ef4444;color:white;font-size:1.1rem">♥ Remove</button>
+                        </form>
+                        <form th:if="${!user.isFavorite(property)}" th:action="@{/favorites/add}" method="post" style="flex:0.5">
+                            <input type="hidden" name="propertyId" th:value="${property.id}" />
+                            <button type="submit" class="property-btn" style="background:#f3f4f6;color:#ef4444;font-size:1.1rem">♡ Add</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- My Favorites Section -->
+    <div class="section" id="favorites">
+        <h2>❤️ My Favorite Properties</h2>
+        <div th:if="${#lists.isEmpty(favoriteProperties)}" class="empty-state">
+            <div class="empty-icon">💔</div>
+            <h3>No favorites yet</h3>
+            <p>Browse and add properties to your favorites to see them here</p>
+        </div>
+        
+        <div class="properties-list" th:unless="${#lists.isEmpty(favoriteProperties)}">
+            <div class="property-item" th:each="property : ${favoriteProperties}" th:attr="data-id=${property.id}">
+                <div class="property-header">
+                    <h3 class="property-name" th:text="${property.name}">Property Name</h3>
+                    <p class="property-address" th:text="${property.address + (property.city != null ? ', ' + property.city : '')}">Address</p>
+                </div>
+                <div class="property-body">
+                    <div class="property-info">
+                        <div class="info-item">
+                            <div class="info-label">Location</div>
+                            <div class="info-value" th:text="${property.city} + (property.pincode != null ? ', ' + property.pincode : '')">City, PIN</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Monthly Rent</div>
+                            <div class="info-value" th:text="'₹' + ${property.price}">₹Price</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Owner</div>
+                            <div class="info-value" th:text="${property.ownerName}">Landlord Name</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Status</div>
+                            <div class="info-value" th:text="${property.verificationStatus}">Status</div>
+                        </div>
+                    </div>
+                    <p style="color:var(--muted);font-size:0.9rem;margin:12px 0" th:text="${property.description != null ? property.description : 'No description available'}">Description</p>
+                    <span class="status-badge status-approved" th:if="${property.verificationStatus == 'APPROVED'}">✓ Verified & Available</span>
+                    <span class="status-badge status-pending" th:if="${property.verificationStatus == 'PENDING'}">⏳ Under Review</span>
+                    <div class="property-footer">
+                        <button class="property-btn btn-details" onclick="alert('View Details - Coming Soon')">View Details</button>
+                        <button class="property-btn btn-contact" onclick="alert('Contact Landlord - Coming Soon')">Contact</button>
+                        <form th:action="@{/favorites/remove}" method="post" style="flex:0.5">
+                            <input type="hidden" name="propertyId" th:value="${property.id}" />
+                            <button type="submit" class="property-btn" style="background:#ef4444;color:white;font-size:1.1rem">♥ Remove</button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -247,347 +305,9 @@
         });
     });
 </script>
-</body>
-</html>
-        <aside class="sidebar" aria-label="Primary sidebar">
-            <div class="brand">
-                <div class="mark" aria-hidden="true">
-                    <!-- mini house -->
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3l9 7h-2v9h-5v-6H10v6H5V10H3l9-7z" fill="#0f1724"/></svg>
-                </div>
-                <div>
-                    <h4>SMART RENT</h4>
-                    <p>Tenant dashboard</p>
-                </div>
-            </div>
 
-            <nav class="nav" aria-label="Sidebar links">
-                <a class="active" href="#dashboard" data-target="dashboard">Dashboard</a>
-                <a href="#properties" data-target="properties">My Properties</a>
-                <a href="#payments" data-target="payments">Payments</a>
-                <a href="#requests" data-target="requests">Maintenance</a>
-                <a href="#messages" data-target="messages">Messages</a>
-                <a href="#profile" data-target="profile">Profile</a>
-            </nav>
-
-            <div class="section-title">Quick actions</div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap">
-                <button class="pill" id="bookVisitBtn">Book visit</button>
-                <button class="pill" id="payRentBtn">Pay rent</button>
-            </div>
-
-            <div class="user-card">
-                <div class="avatar" th:text="${user.firstName != null ? #strings.substring(user.firstName,0,1) : ''} + (user.lastName != null ? #strings.substring(user.lastName,0,1) : '')">CB</div>
-                <div class="user-meta">
-                    <strong th:text="${user.firstName + ' ' + user.lastName}">Tenant Name</strong>
-                    <small th:text="${user.tenantType != null ? user.tenantType + ' tenant' : 'Tenant'}">Active tenant</small>
-                </div>
-            </div>
-        </aside>
-
-        <!-- MAIN -->
-        <main class="main" id="dashboard">
-            <div class="topbar fade-up">
-                <div class="search">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 21l-4.35-4.35" stroke="#9CA3AF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="11" r="6" stroke="#9CA3AF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    <input id="searchInput" placeholder="Search properties, messages or payments" aria-label="Search" />
-                </div>
-
-                <div class="top-actions">
-                    <button class="btn" id="newRequestBtn">New request</button>
-                    <div style="display:flex;align-items:center;gap:12px">
-                        <div style="text-align:right">
-                            <div style="font-weight:700" th:text="${user.firstName + ' ' + user.lastName}">Hello, Tenant</div>
-                            <div style="font-size:12px;color:var(--muted)">Welcome back 👋</div>
-                        </div>
-                        <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(180deg,#fff,#f2f2ff);display:grid;place-items:center;font-weight:700" th:text="${(user.firstName != null ? #strings.substring(user.firstName,0,1) : '') + (user.lastName != null ? #strings.substring(user.lastName,0,1) : '')}">TB</div>
-                    </div>
-                </div>
-            </div>
-
-            <section class="grid" style="margin-top:10px">
-                <!-- KPIs -->
-                <div class="card">
-                    <div class="kpi">
-                        <small>Next rent due</small>
-                        <h3>₹12,500 <small style="color:var(--muted);font-weight:600">— 12 Dec 2025</small></h3>
-                        <div style="margin-top:10px">
-                            <button class="btn" id="payNowBtn">Pay Now</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="kpi">
-                        <small>Active bookings</small>
-                        <h3>2 <small style="color:var(--muted);font-weight:600">— upcoming visits</small></h3>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="kpi">
-                        <small>Open requests</small>
-                        <h3>1 <small style="color:var(--muted);font-weight:600">— maintenance</small></h3>
-                        <div style="margin-top:10px">
-                            <button class="btn" id="viewRequestsBtn">View requests</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Properties list -->
-                <div class="card card-wide" id="properties">
-                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-                        <div>
-                            <strong>My Properties</strong>
-                            <div style="font-size:13px;color:var(--muted)">Properties you currently rent</div>
-                        </div>
-                        <a href="#properties" style="color:var(--accent);font-weight:700;text-decoration:none">View all</a>
-                    </div>
-
-                    <div class="properties" id="propertiesList">
-                        <div th:if="${#lists.isEmpty(availableProperties)}" style="color:var(--muted);padding:12px">No properties available right now.</div>
-                        <div class="property" th:each="property : ${availableProperties}" th:attr="data-id=${property.id}">
-                            <div class="thumb" th:style="'background-image:url(' + (property.imagesPath != null ? #strings.split(property.imagesPath,',')[0] : 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=60') + ')' "></div>
-                            <div class="meta">
-                                <h4 th:text="${property.name}">Property Name</h4>
-                                <small th:text="${property.city} + (property.pincode != null ? ', ' + property.pincode : '') + ' • ₹' + property.price + ' / month'">City • Price</small>
-                            </div>
-                            <div style="text-align:right">
-                                <div class="status active" th:if="${property.verificationStatus} == 'APPROVED'">Available</div>
-                                <div class="status pending" th:if="${property.verificationStatus} != 'APPROVED'" th:text="${property.verificationStatus}">Status</div>
-                                <small style="color:var(--muted);display:block;margin-top:6px" th:text="${property.address}">Address</small>
-                                <div class="actions" style="margin-top:8px">
-                                    <a th:href="@{/property/{id}(id=${property.id})}" class="details" style="background:transparent;border:0;color:var(--accent);font-weight:700;text-decoration:none">Details</a>
-                                    <button class="pay" type="button" th:onclick="|openModal('Contact landlord','Request details for ' + '${property.name}', function(){ showToast('Request sent (demo)') })|">Contact</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Recent activity / Payments -->
-                <div class="card card-full" id="payments">
-                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-                        <div>
-                            <strong>Recent activity</strong>
-                            <div style="font-size:13px;color:var(--muted)">Payments, requests and messages</div>
-                        </div>
-                        <div style="font-size:13px;color:var(--muted)">Show last 30 days</div>
-                    </div>
-
-                    <div style="overflow:auto">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Type</th>
-                                    <th>Details</th>
-                                    <th>Amount</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody id="activityBody">
-                                <tr>
-                                    <td>Rent</td>
-                                    <td>Greenview — Nov 2025</td>
-                                    <td>₹12,500</td>
-                                    <td style="color:green;font-weight:700">Paid</td>
-                                </tr>
-                                <tr>
-                                    <td>Maintenance</td>
-                                    <td>Leaky tap — Request #342</td>
-                                    <td>—</td>
-                                    <td style="color:#c2410c;font-weight:700">Open</td>
-                                </tr>
-                                <tr>
-                                    <td>Message</td>
-                                    <td>Owner replied to inspection</td>
-                                    <td>—</td>
-                                    <td style="color:var(--muted)">Read</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-            </section>
-
-        </main>
-    </div>
-
-    <!-- Modal (reused) -->
-    <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-hidden="true">
-        <div class="modal" id="modal">
-            <h3 id="modalTitle">New request</h3>
-            <p id="modalDesc" style="color:var(--muted)">Describe the issue or request and submit.</p>
-            <form id="modalForm">
-                <div style="margin-top:12px"><label style="font-size:13px">Subject</label><input required id="subject" style="width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid #eee" /></div>
-                <div style="margin-top:12px"><label style="font-size:13px">Details</label><textarea required id="details" style="width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid #eee" rows="4"></textarea></div>
-                <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
-                    <button type="button" id="modalCancel" style="background:transparent;border:0;padding:10px 14px;border-radius:8px;cursor:pointer">Cancel</button>
-                    <button class="btn" id="modalSubmit" type="submit">Submit</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Toast -->
-    <div class="toast" id="toast" role="status" aria-live="polite"></div>
-
-    <script>
-        // small interactive behaviour: mark active nav, search filter, sample interactions
-        document.querySelectorAll('.nav a').forEach(a => {
-            a.addEventListener('click', (e) => {
-                e.preventDefault();
-                document.querySelectorAll('.nav a').forEach(x => x.classList.remove('active'));
-                a.classList.add('active');
-                const target = a.dataset.target;
-                if (target) {
-                    const el = document.getElementById(target);
-                    if (el) el.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            })
-        });
-
-        // basic search filter for properties
-        const input = document.querySelector('#searchInput');
-        input.addEventListener('input', () => {
-            const q = input.value.trim().toLowerCase();
-            document.querySelectorAll('.property').forEach(prop => {
-                const txt = (prop.querySelector('.meta h4').textContent + ' ' + prop.querySelector('.meta small').textContent).toLowerCase();
-                prop.style.display = txt.includes(q) ? 'flex' : 'none';
-            });
-        });
-
-        // Toast helper
-        function showToast(text, time = 3000) {
-            const t = document.getElementById('toast');
-            t.textContent = text;
-            t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), time);
-        }
-
-        // Modal helpers
-        const modalBackdrop = document.getElementById('modalBackdrop');
-        const modal = document.getElementById('modal');
-        const modalTitle = document.getElementById('modalTitle');
-        const modalDesc = document.getElementById('modalDesc');
-        const modalForm = document.getElementById('modalForm');
-
-        function openModal(title, desc, onSubmit) {
-            modalTitle.textContent = title;
-            modalDesc.textContent = desc || '';
-            modalBackdrop.style.display = 'flex';
-            modalBackdrop.setAttribute('aria-hidden', 'false');
-            setTimeout(() => modal.classList.add('show'), 20);
-
-            // temporary submit handler
-            modalForm.onsubmit = function(e) {
-                e.preventDefault();
-                const subject = document.getElementById('subject').value.trim();
-                const details = document.getElementById('details').value.trim();
-                if (!subject || !details) return showToast('Please fill all fields');
-                closeModal();
-                if (typeof onSubmit === 'function') onSubmit({
-                    subject,
-                    details
-                });
-            }
-        }
-
-        function closeModal() {
-            modal.classList.remove('show');
-            setTimeout(() => {
-                modalBackdrop.style.display = 'none';
-                modalBackdrop.setAttribute('aria-hidden', 'true');
-                modalForm.reset();
-            }, 220);
-        }
-        document.getElementById('modalCancel').addEventListener('click', closeModal);
-        modalBackdrop.addEventListener('click', (e) => {
-            if (e.target === modalBackdrop) closeModal();
-        });
-
-        // Button behaviours
-        document.getElementById('newRequestBtn').addEventListener('click', () => {
-            openModal('New maintenance request', 'Tell us what needs attention and we will notify your landlord.', (data) => {
-                // simulate adding an activity row
-                const tbody = document.getElementById('activityBody');
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td>Maintenance</td><td>${data.subject}</td><td>—</td><td style="color:#c2410c;font-weight:700">Open</td>`;
-                tbody.prepend(tr);
-                showToast('Request submitted');
-            });
-        });
-
-        document.getElementById('bookVisitBtn').addEventListener('click', () => {
-            openModal('Book a visit', 'Pick a convenient time and we will confirm with the owner.', (data) => {
-                showToast('Visit requested');
-            });
-        });
-
-        document.getElementById('payRentBtn').addEventListener('click', () => {
-            openModal('Pay rent', 'Enter amount and payment method (demo).', (data) => {
-                showToast('Payment processed (demo)');
-            });
-        });
-
-        document.getElementById('payNowBtn').addEventListener('click', () => {
-            openModal('Pay rent — Greenview', 'Pay ₹12,500 for Greenview — Nov 2025 (demo).', (data) => {
-                // mark last rent as paid in table
-                const tbody = document.getElementById('activityBody');
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td>Rent</td><td>Greenview — ${new Date().toLocaleString('default', {month: 'short'})} ${new Date().getFullYear()}</td><td>₹12,500</td><td style="color:green;font-weight:700">Paid</td>`;
-                tbody.prepend(tr);
-                showToast('Payment successful (demo)');
-            });
-        });
-
-        document.getElementById('viewRequestsBtn').addEventListener('click', () => {
-            // simulate navigation
-            document.querySelectorAll('.nav a').forEach(x => x.classList.remove('active'));
-            const reqNav = Array.from(document.querySelectorAll('.nav a')).find(a => a.dataset.target === 'requests');
-            if (reqNav) {
-                reqNav.classList.add('active');
-                showToast('Showing requests (filtered)');
-            }
-        });
-
-        // property actions
-        document.querySelectorAll('.property .actions .details').forEach(b => {
-            b.addEventListener('click', () => {
-                const pid = b.dataset.id;
-                openModal('Property details', 'Details for ' + pid, () => {
-                    showToast('Close');
-                });
-            })
-        });
-        document.querySelectorAll('.property .actions .pay').forEach(b => {
-            b.addEventListener('click', () => {
-                const pid = b.dataset.id;
-                openModal('Pay rent — ' + pid, 'Pay rent for property ' + pid + ' (demo).', () => {
-                    showToast('Payment success (demo)');
-                });
-            })
-        });
-
-        // accessibility: close modal with Esc
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeModal();
-        });
-
-        // small fade-in effect
-        window.addEventListener('load', () => {
-            document.querySelectorAll('.fade-up').forEach((el, i) => {
-                el.style.animationDelay = (i * 80) + 'ms'
-            });
-        });
-    </script>
-
-    <!-- FOOTER -->
-    <footer class="footer">
+<!-- FOOTER -->
+<footer class="footer">
         <div class="footer-content">
             <div class="footer-section">
                 <h4>🏠 Smart Rent House</h4>

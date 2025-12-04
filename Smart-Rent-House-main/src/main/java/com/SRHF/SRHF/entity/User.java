@@ -8,6 +8,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 import java.time.LocalDate;
 
 @Entity
@@ -83,8 +85,13 @@ public class User  implements UserDetails {
     @Column(name = "bio", length = 1000)
     private String bio;
 
-    @Column(name = "avatar_path")
-    private String avatarPath;
+    @ManyToMany
+    @JoinTable(
+            name = "user_favorites",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "property_id")
+    )
+    private Set<Property> favoriteProperties = new HashSet<>();
 
     public User() {
     }
@@ -269,11 +276,27 @@ public class User  implements UserDetails {
         this.bio = bio;
     }
 
-    public String getAvatarPath() {
-        return avatarPath;
+    public String getProfilePicturePath() {
+        return "/images/default-avatar.svg";
     }
 
-    public void setAvatarPath(String avatarPath) {
-        this.avatarPath = avatarPath;
+    public Set<Property> getFavoriteProperties() {
+        return favoriteProperties;
+    }
+
+    public void setFavoriteProperties(Set<Property> favoriteProperties) {
+        this.favoriteProperties = favoriteProperties;
+    }
+
+    public void addFavoriteProperty(Property property) {
+        this.favoriteProperties.add(property);
+    }
+
+    public void removeFavoriteProperty(Property property) {
+        this.favoriteProperties.remove(property);
+    }
+
+    public boolean isFavorite(Property property) {
+        return this.favoriteProperties.contains(property);
     }
 }

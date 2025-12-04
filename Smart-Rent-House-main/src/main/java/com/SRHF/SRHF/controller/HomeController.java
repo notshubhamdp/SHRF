@@ -54,6 +54,7 @@ public class HomeController {
         // Add user and a list of approved properties for tenants to browse
         model.addAttribute("user", user);
         model.addAttribute("availableProperties", propertyRepository.findByVerificationStatusOrderByCreatedAtDesc("APPROVED"));
+        model.addAttribute("favoriteProperties", user.getFavoriteProperties());
         return "tenant-dashboard";
     }
 }
