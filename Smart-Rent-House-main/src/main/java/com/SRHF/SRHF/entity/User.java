@@ -111,7 +111,11 @@ public class User  implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        SimpleGrantedAuthority authority= new SimpleGrantedAuthority("ROLE_USER");
+        String roleAuthority = "ROLE_USER"; // default
+        if (this.role != null && !this.role.isEmpty()) {
+            roleAuthority = "ROLE_" + this.role;
+        }
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(roleAuthority);
         return List.of(authority);
     }
 
