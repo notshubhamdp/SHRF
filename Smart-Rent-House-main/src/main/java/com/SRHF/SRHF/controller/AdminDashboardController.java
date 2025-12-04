@@ -33,6 +33,14 @@ public class AdminDashboardController {
         model.addAttribute("totalUsers", userRepository.count());
         model.addAttribute("totalProperties", propertyRepository.count());
         
+        // Get pending and approved property counts
+        long pendingCount = propertyRepository.findByVerificationStatus("PENDING").size();
+        long approvedCount = propertyRepository.findByVerificationStatus("APPROVED").size();
+        
+        model.addAttribute("pendingCount", pendingCount);
+        model.addAttribute("approvedCount", approvedCount);
+        model.addAttribute("pendingProperties", propertyRepository.findByVerificationStatus("PENDING"));
+        
         return "admin-dashboard-main";
     }
 }
