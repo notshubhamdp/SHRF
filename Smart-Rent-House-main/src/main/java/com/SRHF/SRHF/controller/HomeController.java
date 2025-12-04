@@ -57,4 +57,19 @@ public class HomeController {
         model.addAttribute("favoriteProperties", user.getFavoriteProperties());
         return "tenant-dashboard";
     }
+
+    @GetMapping("/favorites")
+    public String myFavorites(Authentication authentication, Model model) {
+        String email = authentication.getName();
+        User user = userRepository.findByemail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        
+        if (!"TENANT".equals(user.getRole())) {
+            return "redirect:/home";
+        }
+
+        // Add user and their favorite properties
+        model.addAttribute("user", user);
+        model.addAttribute("favoriteProperties", user.getFavoriteProperties());
+        return "Favorite-Properties-tenant";
+    }
 }

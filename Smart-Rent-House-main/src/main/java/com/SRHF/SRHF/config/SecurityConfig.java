@@ -28,8 +28,8 @@ public class SecurityConfig {
                     .requestMatchers("/role-selection/**").authenticated()
                     .requestMatchers("/landlord/**").authenticated()
                     .requestMatchers("/landlord-dashboard").authenticated()
-                    .requestMatchers("/tenant-dashboard","/profile/**").authenticated()
-                    .requestMatchers("/admin/**").hasRole("ADMIN")
+                    .requestMatchers("/tenant-dashboard","/profile/**","/favorites").authenticated()
+                    .requestMatchers("/admin-dashboard","/admin/**").hasRole("ADMIN")
                     .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

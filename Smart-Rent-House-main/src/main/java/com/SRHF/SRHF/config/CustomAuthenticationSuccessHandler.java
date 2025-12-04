@@ -24,7 +24,10 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         String email = authentication.getName();
         User user = userRepository.findByemail(email).orElse(null);
 
-        if (user != null && (user.getRole() == null || user.getRole().isEmpty())) {
+        if (user != null && "ADMIN".equals(user.getRole())) {
+            // Redirect admins to admin dashboard
+            response.sendRedirect("/admin-dashboard");
+        } else if (user != null && (user.getRole() == null || user.getRole().isEmpty())) {
             // Redirect to role selection if role not set
             response.sendRedirect("/role-selection");
         } else if (user != null && "LANDLORD".equals(user.getRole())) {

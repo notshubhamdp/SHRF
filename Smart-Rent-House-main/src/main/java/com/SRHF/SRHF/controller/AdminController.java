@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/admin")
 public class AdminController {
 
     private final PropertyRepository propertyRepository;
@@ -26,20 +25,37 @@ public class AdminController {
     }
 
     /**
-     * Show admin dashboard with pending properties count
+     * Main admin dashboard at /admin-dashboard
      */
-    @GetMapping("/dashboard")
-    public String dashboard(Authentication authentication, Model model) {
-        // Verify admin role (optional - can be enforced by SecurityConfig)
+    @GetMapping("/admin-dashboard")
+    public String mainAdminDashboard(Authentication authentication, Model model) {
+        String email = authentication.getName();
+        User admin = userRepository.findByemail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Admin not found"));
+
+        if (!"ADMIN".equals(admin.getRole())) {
+            return "redirect:/home";
+        }
+
+        long totalUsers = userRepository.count();
+        long totalProperties = propertyRepository.count();
         List<Property> pendingProperties = propertyRepository.findByVerificationStatus("PENDING");
+        List<Property> approvedProperties = propertyRepository.findByVerificationStatus("APPROVED");
+
+        model.addAttribute("admin", admin);
+        model.addAttribute("totalUsers", totalUsers);
+        model.addAttribute("totalProperties", totalProperties);
         model.addAttribute("pendingCount", pendingProperties.size());
+        model.addAttribute("approvedCount", approvedProperties.size());
+        model.addAttribute("pendingProperties", pendingProperties.stream().limit(5).toList());
+        
         return "admin-dashboard";
     }
 
     /**
      * List all pending properties for admin verification
      */
-    @GetMapping("/pending-properties")
+    @GetMapping("/admin/pending-properties")
     public String pendingProperties(Authentication authentication, Model model) {
         List<Property> properties = propertyRepository.findByVerificationStatusOrderByCreatedAtDesc("PENDING");
         model.addAttribute("properties", properties);
@@ -50,7 +66,7 @@ public class AdminController {
     /**
      * List approved properties
      */
-    @GetMapping("/approved-properties")
+    @GetMapping("/admin/approved-properties")
     public String approvedProperties(Authentication authentication, Model model) {
         List<Property> properties = propertyRepository.findByVerificationStatusOrderByCreatedAtDesc("APPROVED");
         model.addAttribute("properties", properties);
@@ -61,7 +77,7 @@ public class AdminController {
     /**
      * List rejected properties
      */
-    @GetMapping("/rejected-properties")
+    @GetMapping("/admin/rejected-properties")
     public String rejectedProperties(Authentication authentication, Model model) {
         List<Property> properties = propertyRepository.findByVerificationStatusOrderByCreatedAtDesc("REJECTED");
         model.addAttribute("properties", properties);
@@ -72,7 +88,7 @@ public class AdminController {
     /**
      * View detailed property information for verification
      */
-    @GetMapping("/property/{id}")
+    @GetMapping("/admin/property/{id}")
     public String propertyDetail(
             @PathVariable Long id,
             Authentication authentication,
@@ -107,7 +123,7 @@ public class AdminController {
     /**
      * Approve property listing (set status to APPROVED)
      */
-    @PostMapping("/property/{id}/approve")
+    @PostMapping("/admin/property/{id}/approve")
     public String approveProperty(
             @PathVariable Long id,
             @RequestParam(value = "notes", required = false) String notes,
@@ -142,7 +158,7 @@ public class AdminController {
     /**
      * Reject property listing (set status to REJECTED)
      */
-    @PostMapping("/property/{id}/reject")
+    @PostMapping("/admin/property/{id}/reject")
     public String rejectProperty(
             @PathVariable Long id,
             @RequestParam(value = "rejectionReason", required = true) String rejectionReason,
@@ -178,7 +194,7 @@ public class AdminController {
     /**
      * Re-request verification for rejected properties (reset to PENDING)
      */
-    @PostMapping("/property/{id}/re-request")
+    @PostMapping("/admin/property/{id}/re-request")
     public String reRequestVerification(
             @PathVariable Long id,
             Authentication authentication,

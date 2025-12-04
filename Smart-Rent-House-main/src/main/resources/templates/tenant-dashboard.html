@@ -137,7 +137,7 @@
                 <div class="action-card-title">Search Properties</div>
                 <div class="action-card-desc">Find your next home</div>
             </div>
-            <a href="#favorites" class="action-card" style="background:linear-gradient(135deg,var(--success) 0%,#059669 100%)">
+            <a th:href="@{/favorites}" class="action-card" style="background:linear-gradient(135deg,var(--success) 0%,#059669 100%)">
                 <div class="action-card-icon">❤️</div>
                 <div class="action-card-title">My Favorites</div>
                 <div class="action-card-desc">Saved properties</div>
@@ -217,55 +217,6 @@
         </div>
     </div>
 
-    <!-- My Favorites Section -->
-    <div class="section" id="favorites">
-        <h2>❤️ My Favorite Properties</h2>
-        <div th:if="${#lists.isEmpty(favoriteProperties)}" class="empty-state">
-            <div class="empty-icon">💔</div>
-            <h3>No favorites yet</h3>
-            <p>Browse and add properties to your favorites to see them here</p>
-        </div>
-        
-        <div class="properties-list" th:unless="${#lists.isEmpty(favoriteProperties)}">
-            <div class="property-item" th:each="property : ${favoriteProperties}" th:attr="data-id=${property.id}">
-                <div class="property-header">
-                    <h3 class="property-name" th:text="${property.name}">Property Name</h3>
-                    <p class="property-address" th:text="${property.address + (property.city != null ? ', ' + property.city : '')}">Address</p>
-                </div>
-                <div class="property-body">
-                    <div class="property-info">
-                        <div class="info-item">
-                            <div class="info-label">Location</div>
-                            <div class="info-value" th:text="${property.city} + (property.pincode != null ? ', ' + property.pincode : '')">City, PIN</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Monthly Rent</div>
-                            <div class="info-value" th:text="'₹' + ${property.price}">₹Price</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Owner</div>
-                            <div class="info-value" th:text="${property.ownerName}">Landlord Name</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Status</div>
-                            <div class="info-value" th:text="${property.verificationStatus}">Status</div>
-                        </div>
-                    </div>
-                    <p style="color:var(--muted);font-size:0.9rem;margin:12px 0" th:text="${property.description != null ? property.description : 'No description available'}">Description</p>
-                    <span class="status-badge status-approved" th:if="${property.verificationStatus == 'APPROVED'}">✓ Verified & Available</span>
-                    <span class="status-badge status-pending" th:if="${property.verificationStatus == 'PENDING'}">⏳ Under Review</span>
-                    <div class="property-footer">
-                        <button class="property-btn btn-details" onclick="alert('View Details - Coming Soon')">View Details</button>
-                        <button class="property-btn btn-contact" onclick="alert('Contact Landlord - Coming Soon')">Contact</button>
-                        <form th:action="@{/favorites/remove}" method="post" style="flex:0.5">
-                            <input type="hidden" name="propertyId" th:value="${property.id}" />
-                            <button type="submit" class="property-btn" style="background:#ef4444;color:white;font-size:1.1rem">♥ Remove</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Information Section -->
     <div class="section">
@@ -316,7 +267,7 @@
             <div class="footer-section">
                 <h4>For Tenants</h4>
                 <a href="/tenant-dashboard">Browse Properties</a>
-                <a href="#">My Favorites</a>
+                <a href="/favorites">My Favorites</a>
                 <a href="#">Saved Searches</a>
                 <a href="#">My Bookings</a>
             </div>
